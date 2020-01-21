@@ -1,4 +1,5 @@
 package com.ilm.visitingcard_v11;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,8 +87,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if(drawer.isDrawerOpen(GravityCompat.START)){
-            drawer.closeDrawer(GravityCompat.START);
+        if(FirebaseAuth.getInstance().getCurrentUser()!= null){
+//            drawer.closeDrawer(GravityCompat.START);
+            FirebaseAuth.getInstance().signOut();
         }else{
             super.onBackPressed();
         }

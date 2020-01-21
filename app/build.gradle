@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -37,4 +38,13 @@ dependencies {
     implementation 'com.master.android:glideimageview:1.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0-beta01"
+    //firebase auth
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    //firebase Core
+    implementation 'com.google.firebase:firebase-core:17.2.2'
+    // firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    // firebase Database
+    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.beardedhen:androidbootstrap:2.0.0'
 }
