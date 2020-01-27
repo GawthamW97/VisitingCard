@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1021119018796",
+    "firebase_url": "https://visiting-card-5b274.firebaseio.com",
+    "project_id": "visiting-card-5b274",
+    "storage_bucket": "visiting-card-5b274.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021119018796:android:6392d4d40254858eb95e89",
+        "android_client_info": {
+          "package_name": "com.ilm.visitingcard_v11"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021119018796-h09mvi75ouo78o2tmbgtukjs1ln5uj7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ilm.visitingcard_v11",
+            "certificate_hash": "2fa3dc21e35337f539ed60cb2cb5e74d21a7a86a"
+          }
+        },
+        {
+          "client_id": "1021119018796-b3df94j6i1fu6idv6ts2063445t7rdvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLP8jqe7ZqhvkDqURVfEUg7NY6GolkmRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021119018796-b3df94j6i1fu6idv6ts2063445t7rdvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
