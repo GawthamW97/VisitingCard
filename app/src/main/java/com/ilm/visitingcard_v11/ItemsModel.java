@@ -1,35 +1,39 @@
 package com.ilm.visitingcard_v11;
 
-import java.io.Serializable;
+public class ItemsModel {
+    private String first,last,eMail;
 
-public class ItemsModel implements Serializable {
-    private String name;
-    private String email;
-    private int images;
-    public ItemsModel(String name, String email, int images) {
-        this.name = name;
-        this.email = email;
-        this.images = images;
+    public  ItemsModel(){
+
     }
 
-    public String getName() {
-        return name;
+    public ItemsModel(String first,String last,String eMail){
+        this.first = first;
+        this.last = last;
+        this.eMail = eMail;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
+    public void setFirst(String first) {
+        this.first = first;
     }
 
-    public int getImages() {
-        return images;
+    public void setLast(String last) {
+        this.last = last;
     }
-    public void setImages(int images) {
-        this.images = images;
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
+    }
+
+    public String getFirst() {
+        return first;
+    }
+
+    public String getLast() {
+        return last;
+    }
+
+    public String geteMail() {
+        return eMail;
     }
 }

@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class ItemsPreviewActivity extends AppCompatActivity {
 
     ImageView imageView;
@@ -24,8 +26,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.getExtras() != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
-            imageView.setImageResource(itemsModel.getImages());
-            textView.setText(itemsModel.getName());
+//            imageView.setImageResource(parseInt(itemsModel.getLast()));
+            textView.setText(Objects.requireNonNull(itemsModel).getFirst());
         }
 
     }
