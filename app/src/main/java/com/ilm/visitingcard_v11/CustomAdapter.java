@@ -5,11 +5,13 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CustomAdapter extends ArrayAdapter<ItemsModel> {
 
@@ -18,6 +20,7 @@ public class CustomAdapter extends ArrayAdapter<ItemsModel> {
 
     public CustomAdapter(MainActivity context, List<ItemsModel> object){
         super(context,0, object);
+
     }
 
     @Override
@@ -26,17 +29,15 @@ public class CustomAdapter extends ArrayAdapter<ItemsModel> {
             convertView =  ((Activity)getContext()).getLayoutInflater().inflate(R.layout.row_item,parent,false);
         }
 
-        TextView titleTextView = (TextView) convertView.findViewById(R.id.mission_title);
-        TextView expTextView = (TextView) convertView.findViewById(R.id.mission_exp);
-        TextView dateTextView = (TextView) convertView.findViewById(R.id.mission_date);
-        TextView descriptionTextView = (TextView) convertView.findViewById(R.id.mission_description);
+        TextView userName = (TextView) convertView.findViewById(R.id.user_name);
+        TextView userMail = (TextView) convertView.findViewById(R.id.user_mail);
+        ImageView userImage = (ImageView) convertView.findViewById(R.id.user_image);
 
-        ItemsModel mission = getItem(position);
+        ItemsModel mission= getItem(position);
 
-        titleTextView.setText(Objects.requireNonNull(mission).getFirst());
-        expTextView.setText(mission.getLast());
-        dateTextView.setText(mission.getFirst());
-        descriptionTextView.setText(mission.geteMail());
+        userName.setText(mission.getfName()+ mission.getlName());
+        userMail.setText(mission.geteMail());
+        Picasso.get().load(mission.getProfilePic()).into(userImage);
 
         return convertView;
     }

@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    private ListView listView;
 
-    private final String COLLECTION_KEY = "users";
+    private final String COLLECTION_KEY = "user";
 
     //Views
     private TextView mHeaderView;
@@ -59,11 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
         mHeaderView = (TextView) findViewById(R.id.missionHeader);
         mMissionListView = (ListView) findViewById(R.id.missionList);
-
-        mHeaderView.setText("Available Missions");
-
         //get Database
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
         //Set up the ArrayList
         mMissionsList = new ArrayList<ItemsModel>();
         //set the Adapter
@@ -76,10 +78,11 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<ItemsModel> mMissionsList = new ArrayList<>();
                 if(task.isSuccessful()){
-                    Log.e("Error",task.getResult().toString());
+                    //Log.e("Error",task.getResult().getDocuments().toString());
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        ItemsModel miss = document.toObject(ItemsModel.class);
-                        mMissionsList.add(miss);
+                        Log.e("Values",document.getData().toString());
+                        ItemsModel model = document.toObject(ItemsModel.class);
+                        mMissionsList.add(model);
                     }
                     ListView mMissionsListView = (ListView) findViewById(R.id.missionList);
                     CustomAdapter mMissionAdapter = new CustomAdapter(MainActivity.this, mMissionsList);
@@ -89,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+//
+
+
     }
 //        Log.d("Start","Initialized");
 //

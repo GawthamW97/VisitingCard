@@ -26,8 +26,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.getExtras() != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
-//            imageView.setImageResource(parseInt(itemsModel.getLast()));
-            textView.setText(Objects.requireNonNull(itemsModel).getFirst());
+//            imageView.setImageResource(parseInt(itemsModel.getlName()));
+            textView.setText(Objects.requireNonNull(itemsModel).getfName());
         }
 
     }

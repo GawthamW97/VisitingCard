@@ -1,39 +1,61 @@
 package com.ilm.visitingcard_v11;
 
 public class ItemsModel {
-    private String first,last,eMail;
+    private String fName, lName,eMail,profilePic,uName;
 
     public  ItemsModel(){
 
     }
 
-    public ItemsModel(String first,String last,String eMail){
-        this.first = first;
-        this.last = last;
+    public  ItemsModel(String uName, String eMail){
+        this.uName = uName;
         this.eMail = eMail;
     }
 
-    public void setFirst(String first) {
-        this.first = first;
+    public ItemsModel(String fName, String lName, String eMail,String profilePic){
+        this.fName = fName;
+        this.lName = lName;
+        this.eMail = eMail;
+        this.profilePic = profilePic;
     }
 
-    public void setLast(String last) {
-        this.last = last;
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
     }
 
     public void seteMail(String eMail) {
         this.eMail = eMail;
     }
 
-    public String getFirst() {
-        return first;
+    public String getfName() {
+        return fName;
     }
 
-    public String getLast() {
-        return last;
+    public String getlName() {
+        return lName;
     }
 
     public String geteMail() {
         return eMail;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
+
+    public String getuName() {
+        return uName;
+    }
+
+    public void setuName(String uName) {
+        this.uName = uName;
     }
 }

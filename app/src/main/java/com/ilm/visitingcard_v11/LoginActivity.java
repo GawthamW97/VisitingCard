@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         loginProgress = findViewById(R.id.login_progress);
         mAuth = FirebaseAuth.getInstance();
         MainActivity = new Intent(this, com.ilm.visitingcard_v11.MainActivity.class);
-        RegisterActivity = new Intent(this, com.ilm.visitingcard_v11.MainActivity.class);
+        RegisterActivity = new Intent(this, com.ilm.visitingcard_v11.RegisterActivity.class);
 
         loginProgress.setVisibility(View.INVISIBLE);
         btnLogin.setOnClickListener(new View.OnClickListener() {

@@ -10,7 +10,6 @@
         android:id="@+id/missionHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Edit/Create mission"
         android:gravity="center"
         android:textStyle="bold"
         android:textColor="@android:color/black"
