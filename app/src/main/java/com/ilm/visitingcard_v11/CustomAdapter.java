@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomAdapter extends ArrayAdapter<ItemsModel> {
+public class CustomAdapter extends ArrayAdapter<ItemsModel>{
 
     Context context;
     ArrayList<ItemsModel> object;
@@ -24,7 +24,7 @@ public class CustomAdapter extends ArrayAdapter<ItemsModel> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(final int position, View convertView, ViewGroup parent){
         if(convertView == null){
             convertView =  ((Activity)getContext()).getLayoutInflater().inflate(R.layout.row_item,parent,false);
         }
@@ -38,7 +38,6 @@ public class CustomAdapter extends ArrayAdapter<ItemsModel> {
         userName.setText(mission.getfName()+ mission.getlName());
         userMail.setText(mission.geteMail());
         Picasso.get().load(mission.getProfilePic()).into(userImage);
-
         return convertView;
     }
 

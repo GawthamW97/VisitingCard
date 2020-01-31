@@ -1,4 +1,4 @@
-package com.ilm.visitingcard_v11;
+package com.ilm.visitingcard_v11.Fragements;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.ilm.visitingcard_v11.R;
 
 public class ProfileFragment extends Fragment {
     @Nullable

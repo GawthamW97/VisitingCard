@@ -1,8 +1,9 @@
 package com.ilm.visitingcard_v11;
 
-public class ItemsModel {
-    private String fName, lName,eMail,profilePic,uName;
+import java.io.Serializable;
 
+public class ItemsModel implements Serializable {
+    private String fName, lName,eMail,profilePic,uName, front, back,position,company,address;
     public  ItemsModel(){
 
     }
@@ -58,4 +59,46 @@ public class ItemsModel {
     public void setuName(String uName) {
         this.uName = uName;
     }
+
+    public String getFront() {
+        return front;
+    }
+
+    public void setFront(String front) {
+        this.front = front;
+    }
+
+    public String getBack() {
+        return back;
+    }
+
+    public void setBack(String back) {
+        this.back = back;
+    }
+
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 }

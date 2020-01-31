@@ -5,9 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
     <TextView
-        android:id="@+id/missionHeader"
+        android:id="@+id/title_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,43 +17,9 @@
         android:textAllCaps="true"
         android:textSize="30dp"
         android:paddingTop="20dp"/>
-
-
     <ListView
-        android:id="@+id/missionList"
+        android:id="@+id/item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </ListView>
-
-    <!--    <RelativeLayout-->
-<!--        android:layout_widtlh="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginTop="70dp">-->
-<!--    </RelativeLayout>-->
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical">-->
-
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:background="@color/colorPrimaryDark"-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
-<!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
-<!--        <FrameLayout-->
-<!--            android:id="@+id/fragment_container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-<!--        </FrameLayout>-->
-<!--    </LinearLayout>-->
-<!--    <com.google.android.material.navigation.NavigationView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:id="@+id/nav_view"-->
-<!--        app:headerLayout="@layout/nav_header"-->
-<!--        app:menu="@menu/drawer_menu"/>-->
 </LinearLayout>

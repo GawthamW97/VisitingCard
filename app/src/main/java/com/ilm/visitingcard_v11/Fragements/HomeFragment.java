@@ -1,4 +1,4 @@
-package com.ilm.visitingcard_v11;
+package com.ilm.visitingcard_v11.Fragements;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,10 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class AddFragment extends Fragment {
+import com.ilm.visitingcard_v11.R;
+
+public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.add_people,container,false);
+        return inflater.inflate(R.layout.activity_main,container,false);
     }
 }

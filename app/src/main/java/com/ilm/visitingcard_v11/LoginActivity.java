@@ -21,7 +21,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText userMail,userPassword;
     private Button btnLogin;
-    private Button btnRegister;
     private ProgressBar loginProgress;
     private FirebaseAuth mAuth;
     private Intent MainActivity;
@@ -35,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         userMail = findViewById(R.id.login_mail);
         userPassword = findViewById(R.id.login_password);
         btnLogin = findViewById(R.id.loginBtn);
-        btnRegister = findViewById(R.id.registerBtn);
+        Button btnRegister = findViewById(R.id.registerBtn);
         loginProgress = findViewById(R.id.login_progress);
         mAuth = FirebaseAuth.getInstance();
         MainActivity = new Intent(this, com.ilm.visitingcard_v11.MainActivity.class);
@@ -48,8 +47,8 @@ public class LoginActivity extends AppCompatActivity {
                 loginProgress.setVisibility(View.VISIBLE);
                 btnLogin.setVisibility(View.INVISIBLE);
 
-                final String mail = userMail.getText().toString();
-                final String password = userPassword.getText().toString();
+                String mail = userMail.getText().toString().trim();
+                String password = userPassword.getText().toString();
 
                 if (mail.isEmpty() || password.isEmpty()){
                     showMessage("Please Verify all fields");
@@ -77,10 +76,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     loginProgress.setVisibility(View.INVISIBLE);
                     btnLogin.setVisibility(View.VISIBLE);
+                    Toast.makeText(LoginActivity.this,"Logged in Successfully",Toast.LENGTH_LONG).show();
                     updateUI();
                 }
                 else{
                     showMessage(task.getException().getMessage());
+                    Toast.makeText(LoginActivity.this,"Log in Failed"+task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
 
             }
