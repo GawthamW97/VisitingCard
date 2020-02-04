@@ -22,7 +22,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items_preview);
 
-
         profilePic = findViewById(R.id.user_image);
         userName = findViewById(R.id.conn_name);
         userMail = findViewById(R.id.conn_mail);
@@ -33,7 +32,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         cardBack = findViewById(R.id.back);
 
         Intent intent = getIntent();
-        if(intent.getExtras() != null){
+        if(intent.getSerializableExtra("items") != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
             Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
             Picasso.get().load(itemsModel.getFront()).into(cardFront);
@@ -42,5 +41,11 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
             userPosition.setText(Objects.requireNonNull(itemsModel).getAddress());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
     }
 }

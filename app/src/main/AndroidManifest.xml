@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".NavigationActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
+        <activity
+            android:name=".NavigationActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EditActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity">

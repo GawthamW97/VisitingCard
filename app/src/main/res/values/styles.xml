@@ -8,9 +8,10 @@
         <item name="colorAccent">@color/bootstrap_brand_secondary_text</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/bootstrap_brand_primary</item>
+        <item name="colorPrimaryDark">@color/bootstrap_brand_secondary_text</item>
+        <item name="colorAccent">@color/bootstrap_brand_secondary_text</item>
     </style>
 
 </resources>
