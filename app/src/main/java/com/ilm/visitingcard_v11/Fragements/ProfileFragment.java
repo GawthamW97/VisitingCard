@@ -45,37 +45,7 @@ public class ProfileFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAth = FirebaseAuth.getInstance();
 
-//        db.collection("user").document(mAth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//
-//                if(task.isSuccessful()){
-//                    for (QueryDocumentSnapshot doc: task.getResult()){
-//
-//                    }
-//
-//                    Log.e("URL",itemsModel.getProfilePic().toString());
-//                    Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
-//                    Picasso.get().load(itemsModel.getFront()).into(cardFront);
-//                    Picasso.get().load(itemsModel.getBack()).into(cardBack);
-//                    userName.setText(Objects.requireNonNull(itemsModel).getfName() + " " + Objects.requireNonNull(itemsModel).getlName());
-//                    userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
-//                    userPosition.setText(Objects.requireNonNull(itemsModel).getAddress());
-//                    Log.e("Success", "success");
-//                }
-//                else{
-//                    Log.d("MissionActivity", "Error getting documents: ", task.getException());
-//                }
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.e("Failed to get Data", e.getMessage());
-//            }
-//        });
-
-        db.collection("user").document(mAth.getUid().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("user").document(mAth.getCurrentUser().getUid().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {

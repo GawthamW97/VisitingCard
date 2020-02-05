@@ -5,18 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/title_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:textAllCaps="true"
-        android:textSize="30dp"
-        android:paddingTop="20dp"/>
+    android:layout_height="match_parent"
+    tools:menu="@menu/menu">
     <ListView
+        android:layout_marginTop="80dp"
         android:id="@+id/item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

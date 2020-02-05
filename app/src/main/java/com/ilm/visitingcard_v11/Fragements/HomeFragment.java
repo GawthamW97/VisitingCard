@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(true);
 //        TextView mHeaderView = getView().findViewById(R.id.title_header);
 //        ListView listItems = getView().findViewById(R.id.item_list);
         //get Database
@@ -86,6 +86,7 @@ public class HomeFragment extends Fragment {
         });
 
     }
+
 
     public class ListViewAdapter extends BaseAdapter implements Filterable {
 

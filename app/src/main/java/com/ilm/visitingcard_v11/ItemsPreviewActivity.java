@@ -1,7 +1,9 @@
 package com.ilm.visitingcard_v11;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +43,25 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
             userPosition.setText(Objects.requireNonNull(itemsModel).getAddress());
         }
+
+        userMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{itemsModel.geteMail()});
+                startActivity(emailIntent);
+            }
+        });
+
+        userPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:0771997168"));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
