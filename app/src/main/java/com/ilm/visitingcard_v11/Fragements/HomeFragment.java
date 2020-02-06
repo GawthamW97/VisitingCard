@@ -3,11 +3,14 @@ package com.ilm.visitingcard_v11.Fragements;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -34,59 +37,98 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    ArrayList<ItemsModel> itemsListModel;
+    HomeFragment.ListViewAdapter listViewAdapter;
+    ListView itemListView;
+    EditText searchList;
+    View mView;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_main, container, false);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-//        TextView mHeaderView = getView().findViewById(R.id.title_header);
-//        ListView listItems = getView().findViewById(R.id.item_list);
-        //get Database
-        //Firebase
+        mView = inflater.inflate(R.layout.activity_main,container,false);
+        searchList = mView.findViewById(R.id.search_list);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(true)
                 .build();
         db.setFirestoreSettings(settings);
-        //Set up the ArrayList
-        itemsListModel = new ArrayList<ItemsModel>();
-        //set the Adapter
-        //Adapter
-//        CustomAdapter listItemAdapter = new CustomAdapter(this, itemsListModel);
-//        listItems.setAdapter(listItemAdapter);
-
-
         String COLLECTION_KEY = "user";
         db.collection(COLLECTION_KEY).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<ItemsModel> mMissionsList = new ArrayList<>();
+                List<ItemsModel> itemList = new ArrayList<>();
                 if(task.isSuccessful()){
                     //Log.e("Error",task.getResult().getDocuments().toString());
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         ItemsModel model = document.toObject(ItemsModel.class);
-                        mMissionsList.add(model);
+                        itemList.add(model);
                     }
-                    ListView itemListView = getView().findViewById(R.id.item_list);
-//                    CustomAdapter mMissionAdapter = new CustomAdapter(MainActivity.this, mMissionsList);
-//                    itemListView.setAdapter(mMissionAdapter);
-
-                    HomeFragment.ListViewAdapter listViewAdapter = new HomeFragment.ListViewAdapter(mMissionsList,HomeFragment.this.getActivity());
+                    itemListView = mView.findViewById(R.id.item_list);
+                    listViewAdapter = new HomeFragment.ListViewAdapter(itemList,HomeFragment.this.getActivity());
                     itemListView.setAdapter(listViewAdapter);
+
+                    searchList.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            HomeFragment.this.listViewAdapter.getFilter().filter(s);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
                 } else {
                     Log.d("MissionActivity", "Error getting documents: ", task.getException());
                 }
             }
         });
-
+     return mView;
     }
 
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setHasOptionsMenu(true);
+////        TextView mHeaderView = getView().findViewById(R.id.title_header);
+////        ListView listItems = getView().findViewById(R.id.item_list);
+//        //get Database
+//        //Firebase
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//                .setPersistenceEnabled(true)
+//                .build();
+//        db.setFirestoreSettings(settings);
+//        //set the Adapter
+//        //Adapter
+////        CustomAdapter listItemAdapter = new CustomAdapter(this, itemsListModel);
+////        listItems.setAdapter(listItemAdapter);
+//
+//
+//        String COLLECTION_KEY = "user";
+//        db.collection(COLLECTION_KEY).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                List<ItemsModel> itemList = new ArrayList<>();
+//                if(task.isSuccessful()){
+//                    //Log.e("Error",task.getResult().getDocuments().toString());
+//                    for(QueryDocumentSnapshot document : task.getResult()) {
+//                        ItemsModel model = document.toObject(ItemsModel.class);
+//                        itemList.add(model);
+//                    }
+//                    itemListView = getView().findViewById(R.id.item_list);
+//                    listViewAdapter = new HomeFragment.ListViewAdapter(itemList,HomeFragment.this.getActivity());
+//                    itemListView.setAdapter(listViewAdapter);
+//                } else {
+//                    Log.d("MissionActivity", "Error getting documents: ", task.getException());
+//                }
+//            }
+//        });
+//    }
 
     public class ListViewAdapter extends BaseAdapter implements Filterable {
 
@@ -102,7 +144,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return itemsModelListFiltered.size();
+                return itemsModelListFiltered.size();
         }
 
         @Override
@@ -150,13 +192,12 @@ public class HomeFragment extends Fragment {
                     if(constraint == null || constraint.length() == 0){
                         filterResults.count = itemModel.size();
                         filterResults.values = itemModel;
-
                     }else{
                         List<ItemsModel> resultsModel = new ArrayList<>();
                         String searchStr = constraint.toString().toLowerCase();
 
                         for(ItemsModel itemsModel: itemModel){
-                            if(itemsModel.getfName().contains(searchStr) || itemsModel.geteMail().contains(searchStr)){
+                            if(itemsModel.getfName().toLowerCase().contains(searchStr.toLowerCase()) || itemsModel.geteMail().contains(searchStr.toLowerCase())){
                                 resultsModel.add(itemsModel);
                                 filterResults.count = resultsModel.size();
                                 filterResults.values = resultsModel;
@@ -170,7 +211,6 @@ public class HomeFragment extends Fragment {
 
                     itemsModelListFiltered = (List<ItemsModel>) results.values;
                     notifyDataSetChanged();
-
                 }
             };
             return filter;

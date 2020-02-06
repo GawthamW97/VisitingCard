@@ -7,8 +7,14 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:menu="@menu/menu">
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Search"
+        android:layout_gravity="center"
+        android:id="@+id/search_list"/>
     <ListView
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:id="@+id/item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

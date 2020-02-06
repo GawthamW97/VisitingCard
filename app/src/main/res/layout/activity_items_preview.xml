@@ -29,64 +29,41 @@
             android:id="@+id/conn_name"
             android:textColor="@android:color/white"
             android:text="Person Name"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:layout_below="@+id/user_image"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
-        android:layout_marginTop="175dp"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
+        android:layout_marginTop="160dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:id="@+id/cardView">
+        android:id="@+id/cardView"
+        app:cardCornerRadius="30dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/user_company"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textStyle="bold"
-                    android:textSize="15sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/conn_position"
-                    android:textSize="12sp"
-                    android:text="Current Position"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="Company"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/conn_position"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Industry"
-                    android:textStyle="bold"
-                    android:textSize="15sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/con_industry"
-                    android:textSize="12sp"
-                    android:text="Current Position"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="Current Position"
+                android:textSize="20sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -95,13 +72,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/cardView"
         android:layout_centerHorizontal="true"
-        android:id="@+id/cardView02">
+        android:id="@+id/cardView02"
+        app:cardCornerRadius="30dp">
     <LinearLayout
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:id="@+id/layout02"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="15dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -117,7 +95,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/conn_mail"
+                android:textSize="20sp"
                 android:text="Email"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/ic_smartphone"/>
+            <TextView
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/conn_phone"
+                android:text="Personal Number"/>
         </LinearLayout>
 
         <LinearLayout
@@ -130,30 +128,13 @@
                 android:layout_height="30dp"
                 app:srcCompat="@drawable/ic_phone_black_24dp"/>
             <TextView
+                android:textSize="20sp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/conn_phone"
-                android:text="Phone Number"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_work_black_24dp"/>
-            <TextView
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/user_company"
-                android:text="Company"/>
+                android:id="@+id/conn_work_phone"
+                android:text="Work Number"/>
         </LinearLayout>
 
         <LinearLayout
@@ -166,6 +147,7 @@
                 android:layout_height="30dp"
                 app:srcCompat="@drawable/ic_location"/>
             <TextView
+                android:textSize="20sp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
@@ -183,6 +165,7 @@
                 android:layout_height="30dp"
                 app:srcCompat="@drawable/ic_web"/>
             <TextView
+                android:textSize="20sp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
@@ -212,10 +195,4 @@
             android:layout_height="90dp"
             android:id="@+id/back"/>
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select to view card"
-        android:layout_below="@id/layout03"
-        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
