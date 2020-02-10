@@ -17,10 +17,14 @@
         <activity android:name=".ProfileActivity"></activity>
         <activity
             android:name=".NavigationActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EditActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".EditActivity"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".RegisterActivity"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".LoginActivity"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

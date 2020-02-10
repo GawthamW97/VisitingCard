@@ -1,8 +1,13 @@
 package com.ilm.visitingcard_v11;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -18,19 +23,26 @@ public class MainActivity extends AppCompatActivity {
 //    com.ilm.visitingcard_v11.CustomAdapter customAdapter;
 //    private DrawerLayout drawer;
 
-//    private ListView listView;
+    //    private ListView listView;
+    private ListItemAdapter listItemAdapter;
+    private RecyclerView itemListView;
+    private EditText searchList;
+    View mView;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    ArrayList<ItemsModel> itemList;
 
     ArrayList<ItemsModel> itemsListModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         /*
          * My code here deals with authentication
          *
          */
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+    }
+}
 //
 //        //Views
 //        TextView mHeaderView = (TextView) findViewById(R.id.title_header);
@@ -73,7 +85,68 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-    }
+//        searchList = findViewById(R.id.search_list);
+//        itemListView = findViewById(R.id.item_list);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        itemListView.setHasFixedSize(true);
+//        itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
+//        itemListView.setLayoutManager(layoutManager);
+//        db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                itemList = new ArrayList<ItemsModel>();
+//                if(task.isSuccessful()){
+//                    //Log.e("Error",task.getResult().getDocuments().toString());
+//                    for(QueryDocumentSnapshot document : task.getResult()) {
+//                        ItemsModel model = document.toObject(ItemsModel.class);
+//                        itemList.add(model);
+//                    }
+//                    listItemAdapter = new ListItemAdapter(itemList);
+//                    Log.e("List",itemList.toString());
+//                    itemListView.setAdapter(listItemAdapter);
+//                    Log.e("List1",itemList.toString());
+//                } else {
+//                    Log.d("MissionActivity", "Error getting documents: ", task.getException());
+//                }
+//            }
+//        });
+//
+//        searchList.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                filter(s.toString());
+//            }
+//        });
+//    }
+//
+//    private void filter(String text) {
+//        //new array list that will hold the filtered data
+//        ArrayList<ItemsModel> filterdNames = new ArrayList<>();
+//
+//        //looping through existing elements
+//        for (ItemsModel model : itemList) {
+//            //if the existing elements contains the search input
+//            if ((model.getfName().toLowerCase().contains(text.toLowerCase())) || (model.geteMail().toLowerCase().contains(text.toLowerCase()))){
+//                //adding the element to filtered list
+//                filterdNames.add(model);
+//            }
+//        }
+//
+//        //calling a method of the adapter class and passing the filtered list
+//        listItemAdapter.filterList(filterdNames);
+//    }
+//}
 //        Log.d("Start","Initialized");
 //
 //        final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -202,4 +275,3 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
-}

@@ -6,17 +6,35 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:layout_marginTop="70dp"
     tools:menu="@menu/menu">
-    <EditText
-        android:layout_width="300dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Search"
         android:layout_gravity="center"
-        android:id="@+id/search_list"/>
-    <ListView
-        android:layout_marginTop="40dp"
+        app:cardCornerRadius="30dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Search"
+                android:layout_gravity="center"
+                android:id="@+id/search_list"
+                style="@style/TextAppearance.AppCompat.Body1"/>
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_search"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="20dp"
         android:id="@+id/item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

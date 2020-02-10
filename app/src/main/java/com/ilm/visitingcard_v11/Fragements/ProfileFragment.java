@@ -91,7 +91,14 @@ public class ProfileFragment extends Fragment {
         cardFront.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGallery();
+                openGalleryFront();
+            }
+        });
+
+        cardBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGalleryBack();
             }
         });
 
@@ -136,7 +143,6 @@ public class ProfileFragment extends Fragment {
         return mView;
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -153,7 +159,6 @@ public class ProfileFragment extends Fragment {
         for(i = 0; i<ImageList.size();i++){
             Uri image = ImageList.get(i);
             final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
-
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -187,7 +192,13 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void openGallery() {
+    private void openGalleryFront() {
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent,1);
+    }
+
+    private void openGalleryBack() {
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent,1);
