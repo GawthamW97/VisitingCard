@@ -1,9 +1,13 @@
 package com.ilm.visitingcard_v11;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ItemsModel implements Serializable {
     private String fName, lName,eMail,profilePic,uName, front, back,position,company,address;
+    private int pNo,wNo;
+    private List<String> conn;
+
     public  ItemsModel(){
 
     }
@@ -101,4 +105,27 @@ public class ItemsModel implements Serializable {
         this.address = address;
     }
 
+    public int getpNo() {
+        return pNo;
+    }
+
+    public void setpNo(int pNo) {
+        this.pNo = pNo;
+    }
+
+    public int getwNo() {
+        return wNo;
+    }
+
+    public void setwNo(int wNo) {
+        this.wNo = wNo;
+    }
+
+    public List<String> getConn() {
+        return conn;
+    }
+
+    public void setConn(List<String> conn) {
+        this.conn = conn;
+    }
 }

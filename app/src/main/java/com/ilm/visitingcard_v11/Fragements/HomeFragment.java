@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -26,6 +28,8 @@ import com.ilm.visitingcard_v11.ListItemAdapter;
 import com.ilm.visitingcard_v11.R;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
@@ -35,7 +39,9 @@ public class HomeFragment extends Fragment {
     private EditText searchList;
     View mView;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<ItemsModel> itemList;
+    List<String> conn_list;
 //    //declaring variables
 //    private ListView listviewforresults;
 //    //Adapter for listview
@@ -58,6 +64,16 @@ public class HomeFragment extends Fragment {
         itemListView.setHasFixedSize(true);
         itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
         itemListView.setLayoutManager(layoutManager);
+        db.collection("user").document(mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot doc = task.getResult();
+                        ItemsModel list = doc.toObject(ItemsModel.class);
+                        conn_list = Objects.requireNonNull(list).getConn();
+                    }
+                });
         db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -65,8 +81,13 @@ public class HomeFragment extends Fragment {
                 if(task.isSuccessful()){
                     //Log.e("Error",task.getResult().getDocuments().toString());
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        ItemsModel model = document.toObject(ItemsModel.class);
-                        itemList.add(model);
+                        Log.e("ID",document.getId());
+                        if(conn_list.contains(document.getId())){
+                            ItemsModel model = document.toObject(ItemsModel.class);
+                            itemList.add(model);
+                        }else{
+                            continue;
+                        }
                     }
                     listAdapter = new ListItemAdapter(itemList);
                     itemListView.setAdapter(listAdapter);

@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11.Fragements;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -46,15 +48,18 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     int i;
+    private final int CODE_IMAGE_GALLERY = 1;
+    private final int CODE_MULTI_IMG_GALLERY = 2;
 
     ArrayList<Uri> ImageList = new ArrayList<Uri>();
 
     Uri imageUri;
+    View mView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View mView = inflater.inflate(R.layout.activity_profile, container, false);
+        mView = inflater.inflate(R.layout.activity_profile, container, false);
         userName = mView.findViewById(R.id.user_profile_name);
         userMail = mView.findViewById(R.id.user_profile_mail);
         userPhone = mView.findViewById(R.id.user_profile_phone);
@@ -87,18 +92,28 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        
+//        init();
 
         cardFront.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGalleryFront();
+                startActivityForResult(Intent.createChooser(new Intent().
+                        setAction(Intent.ACTION_GET_CONTENT).
+                        setType("image/*"),"Select one Image"),
+                        CODE_IMAGE_GALLERY);
             }
         });
 
         cardBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGalleryBack();
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+                startActivityForResult(Intent.createChooser(intent,"Select multiple images"),
+                        CODE_MULTI_IMG_GALLERY);
             }
         });
 
@@ -107,14 +122,13 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 String firstName = userName.getText().toString();
                 String workAddress = userAddress.getText().toString();
-                String phoneNumber = userPhone.getText().toString();
+                int phoneNumber = Integer.parseInt(String.valueOf(userPhone.getText()).trim());
                 String companyName = userCompany.getText().toString();
                 String position = userPosition.getText().toString();
                 String companySite = userSite.getText().toString();
-                String workNumber = workPhone.getText().toString();
+                int workNumber = Integer.parseInt(workPhone.getText().toString().trim());
 
-
-                Map<Object,String> user = new HashMap<>();
+                Map<Object,Object> user = new HashMap<>();
                 user.put("fName",firstName);
                 user.put("company",companyName);
                 user.put("pNo",phoneNumber);
@@ -124,9 +138,8 @@ public class ProfileFragment extends Fragment {
                 user.put("eMail",mAuth.getCurrentUser().getEmail());
                 user.put("website",companySite);
                 uploadImage(user);
-
                 db.collection("user").document(mAuth.getUid())
-                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(ProfileFragment.this.getActivity(),"Successfully Updated",Toast.LENGTH_SHORT).show();
@@ -143,17 +156,38 @@ public class ProfileFragment extends Fragment {
         return mView;
     }
 
+    private void init() {
+        this.cardFront = mView.findViewById(R.id.front);
+        this.cardBack = mView.findViewById(R.id.back);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK && requestCode == 1 && data != null){
-            imageUri = data.getData();
-            ImageList.add(imageUri);
+        if(requestCode == CODE_IMAGE_GALLERY && resultCode == RESULT_OK){
+            Uri imageUri = data.getData();
+            if(imageUri != null){
+                cardFront.setImageURI(imageUri);
+            }
+        }else if(requestCode == CODE_MULTI_IMG_GALLERY && resultCode == RESULT_OK){
+            ClipData clipData = data.getClipData();
+
+            if(clipData != null){
+                cardFront.setImageURI(clipData.getItemAt(0).getUri());
+                cardBack.setImageURI(clipData.getItemAt(1).getUri());
+
+                for(int i = 0; i < clipData.getItemCount();i++){
+                    ClipData.Item item = clipData.getItemAt(i);
+                    Uri url = item.getUri();
+                    ImageList.add(url);
+                    Log.e("MULTI", url.toString());
+                }
+            }
         }
     }
 
-    private void uploadImage(final Map<Object, String> user){
+    private void uploadImage(final Map<Object, Object> user){
         StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
         for(i = 0; i<ImageList.size();i++){
@@ -174,7 +208,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void StoreLink(String url,Map<Object,String> user) {
+    private void StoreLink(String url,Map<Object,Object> user) {
         user.put("profilePic",url);
 
         db.collection("user").document(mAuth.getUid())
