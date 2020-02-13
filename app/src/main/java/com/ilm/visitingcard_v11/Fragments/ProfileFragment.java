@@ -1,4 +1,4 @@
-package com.ilm.visitingcard_v11.Fragements;
+package com.ilm.visitingcard_v11.Fragments;
 
 import android.content.ClipData;
 import android.content.Intent;
@@ -41,20 +41,18 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
 
-    private ItemsModel itemsModel;
     private EditText userName,userPosition,userMail,userAddress,userPhone,userCompany,userSite,workPhone;
     private ImageView cardFront,cardBack;
-    private Button updatebtn;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     int i;
     private final int CODE_IMAGE_GALLERY = 1;
     private final int CODE_MULTI_IMG_GALLERY = 2;
 
-    ArrayList<Uri> ImageList = new ArrayList<Uri>();
+    private ArrayList<Uri> ImageList = new ArrayList<Uri>();
 
     Uri imageUri;
-    View mView;
+    private View mView;
 
     @Nullable
     @Override
@@ -67,16 +65,18 @@ public class ProfileFragment extends Fragment {
         userAddress = mView.findViewById(R.id.user_profile_location);
         cardFront = mView.findViewById(R.id.visiting_front);
         cardBack = mView.findViewById(R.id.visiting_back);
-        updatebtn = mView.findViewById(R.id.user_update);
+        Button updatebtn = mView.findViewById(R.id.user_update);
         userCompany = mView.findViewById(R.id.user_profile_company);
         userSite = mView.findViewById(R.id.user_profile_web);
         workPhone = mView.findViewById(R.id.user_work_phone);
 
-
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        db.collection("user").document(mAuth.getCurrentUser().getUid().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        // GET THE DETAILS OF THE CURRENT USER FROM THE DATABASES
+        db.collection("user").document(mAuth.getCurrentUser().getUid().toString())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -88,12 +88,13 @@ public class ProfileFragment extends Fragment {
                     userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
                     userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
                     userCompany.setText(itemsModel.getCompany());
+                    userPhone.setText(String.valueOf(itemsModel.getpNo()));
+                    workPhone.setText(String.valueOf(itemsModel.getwNo()));
+                    userAddress.setText(itemsModel.getAddress());
                     Log.e("Success", "success");
                 }
             }
         });
-        
-//        init();
 
         cardFront.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +117,8 @@ public class ProfileFragment extends Fragment {
                         CODE_MULTI_IMG_GALLERY);
             }
         });
+
+        // UPDATE THE CURRENT USER DETAIL ON THE CLICK OF THE BUTTON
 
         updatebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,12 +156,14 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        return mView;
-    }
+//        back_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), NavigationActivity.class));
+//            }
+//        });
 
-    private void init() {
-        this.cardFront = mView.findViewById(R.id.front);
-        this.cardBack = mView.findViewById(R.id.back);
+        return mView;
     }
 
     @Override
@@ -187,6 +192,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    //GET IMAGE URL
     private void uploadImage(final Map<Object, Object> user){
         StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
@@ -208,6 +214,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    //UPLOAD IMAGE TO DATABASE
     private void StoreLink(String url,Map<Object,Object> user) {
         user.put("profilePic",url);
 

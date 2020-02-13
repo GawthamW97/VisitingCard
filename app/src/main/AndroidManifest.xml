@@ -11,14 +11,14 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ScanCodeActivity"></activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".ProfileActivity" />
         <activity
             android:name=".NavigationActivity"
@@ -31,11 +31,10 @@
             android:name=".RegisterActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".SplashScreenActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

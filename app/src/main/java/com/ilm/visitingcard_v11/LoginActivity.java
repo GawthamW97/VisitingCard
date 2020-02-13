@@ -41,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         RegisterActivity = new Intent(this, com.ilm.visitingcard_v11.RegisterActivity.class);
 
         loginProgress.setVisibility(View.INVISIBLE);
+
+        //ON BUTTON CLICK VERIFY THE FIELDS AND INPUTS
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //USER LOGIN WITH MAIL ADDRESS AND PASSWORD
     private void signIn(String mail, String password) {
 
         mAuth.signInWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

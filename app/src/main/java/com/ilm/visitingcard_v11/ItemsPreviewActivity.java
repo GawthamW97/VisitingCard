@@ -54,10 +54,11 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             Picasso.get().load(itemsModel.getBack()).into(cardBack);
             userName.setText(Objects.requireNonNull(itemsModel).getfName()+" "+Objects.requireNonNull(itemsModel).getlName());
             userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
-            userPosition.setText(Objects.requireNonNull(itemsModel).getAddress());
+            userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
             userCompany.setText(Objects.requireNonNull(itemsModel).getCompany());
             userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
             userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
+            userAddress.setText(itemsModel.getAddress());
         }
         //TODO: Get user profile after scanning
         Intent qrIntent = getIntent();
@@ -76,7 +77,10 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                         userName.setText(Objects.requireNonNull(itemsModel).getfName());
                         userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
                         userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
-//                        userCompany.setText(itemsModel.getCompany());
+                        userCompany.setText(itemsModel.getCompany());
+                        userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
+                        userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
+                        userAddress.setText(itemsModel.getAddress());
                         Log.e("TAG", "success");
                     }else{
                         Log.e("TAG", "Fail");

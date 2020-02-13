@@ -1,4 +1,4 @@
-package com.ilm.visitingcard_v11.Fragements;
+package com.ilm.visitingcard_v11.Fragments;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,7 +35,6 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
-//    ListViewAdapter listViewAdapter;
     private ListItemAdapter listAdapter;
     private RecyclerView itemListView;
     private EditText searchList;
@@ -41,15 +42,7 @@ public class HomeFragment extends Fragment {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<ItemsModel> itemList;
-    List<String> conn_list;
-//    //declaring variables
-//    private ListView listviewforresults;
-//    //Adapter for listview
-//    ArrayAdapter<String> ReAdapter;
-//    //Edittext for search
-//    EditText searchdata;
-//    //ArrayList for listview
-//    ArrayList<String>  data=new ArrayList<String>();
+    List<String> conn_list = null;
 
     @Nullable
     @Override
@@ -64,6 +57,9 @@ public class HomeFragment extends Fragment {
         itemListView.setHasFixedSize(true);
         itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
         itemListView.setLayoutManager(layoutManager);
+
+        //Get a list of connections that the current user has.
+
         db.collection("user").document(mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -71,9 +67,17 @@ public class HomeFragment extends Fragment {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot doc = task.getResult();
                         ItemsModel list = doc.toObject(ItemsModel.class);
-                        conn_list = Objects.requireNonNull(list).getConn();
+                        if(list.getConn()== null){
+                            conn_list = null;
+                        }else
+                        {
+                            conn_list = Objects.requireNonNull(list).getConn();
+                        }
                     }
                 });
+
+        //Get the list of users from the database and compare with the list of users that the current user has connected
+
         db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -81,10 +85,10 @@ public class HomeFragment extends Fragment {
                 if(task.isSuccessful()){
                     //Log.e("Error",task.getResult().getDocuments().toString());
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        Log.e("ID",document.getId());
-                        if(conn_list.contains(document.getId())){
+                        if((conn_list != null)&&conn_list.contains(document.getId())){
                             ItemsModel model = document.toObject(ItemsModel.class);
                             itemList.add(model);
+                            Log.e("ID",conn_list.toString());
                         }else{
                             continue;
                         }
@@ -96,6 +100,8 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+        // Search the list from the characters the user inserts in the text field.
 
         searchList.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,6 +120,27 @@ public class HomeFragment extends Fragment {
                 filter(s.toString());
             }
         });
+
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Log.e("POS",String.valueOf(position));
+//                Log.e("POS",String.valueOf(conn_list.get(position)));
+//                Log.e("POS",String.valueOf(conn_list));
+                db.collection("user").document(mAuth.getCurrentUser().getUid())
+                        .update("conn", FieldValue.arrayRemove(conn_list.get(position)).toString());
+                conn_list.remove(position);
+                listAdapter.notifyItemRemoved(position);
+            }
+        });
+
+        helper.attachToRecyclerView(itemListView);
      return mView;
     }
 

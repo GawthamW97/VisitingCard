@@ -17,6 +17,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_search"/>
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
@@ -24,11 +29,6 @@
                 android:layout_gravity="center"
                 android:id="@+id/search_list"
                 style="@style/TextAppearance.AppCompat.Body1"/>
-            <ImageView
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_search"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <androidx.recyclerview.widget.RecyclerView
