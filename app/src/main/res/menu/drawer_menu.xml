@@ -16,18 +16,11 @@
         <item
             android:id="@+id/nav_addCard"
             android:icon="@drawable/ic_add_box"
-            android:title="Add Card"/>
-        <item
-            android:id="@+id/nav_shareCard"
-            android:icon="@drawable/ic_share"
-            android:title="Share Card"/>
+            android:title="Add/Share Card"/>
     </group>
 
     <item android:title="Communicate">
         <menu>
-            <item android:id="@+id/nav_send"
-                android:icon="@drawable/ic_send_black_24dp"
-                android:title="Send"/>
             <item android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_arrow_back"
                 android:title="Logout"/>

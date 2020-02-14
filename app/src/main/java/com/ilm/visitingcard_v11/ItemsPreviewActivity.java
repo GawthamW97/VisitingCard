@@ -72,6 +72,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         DocumentSnapshot doc = task.getResult();
                         ItemsModel itemsModel = doc.toObject(ItemsModel.class);
+                        Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
                         Picasso.get().load(itemsModel.getFront()).into(cardFront);
                         Picasso.get().load(itemsModel.getBack()).into(cardBack);
                         userName.setText(Objects.requireNonNull(itemsModel).getfName());

@@ -30,7 +30,6 @@ import com.google.zxing.integration.android.IntentResult;
 import com.ilm.visitingcard_v11.Fragments.AddFragment;
 import com.ilm.visitingcard_v11.Fragments.HomeFragment;
 import com.ilm.visitingcard_v11.Fragments.ProfileFragment;
-import com.ilm.visitingcard_v11.Fragments.ShareFragment;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -128,18 +127,11 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentTransaction.replace(R.id.container_fragment,new AddFragment());
             fragmentTransaction.commit();
         }
-        if(menuItem.getItemId() == R.id.nav_shareCard){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new ShareFragment());
-            fragmentTransaction.commit();
-        }
         if(menuItem.getItemId() == R.id.nav_logout){
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(NavigationActivity.this,LoginActivity.class));
         }
-
                 return true;
     }
 

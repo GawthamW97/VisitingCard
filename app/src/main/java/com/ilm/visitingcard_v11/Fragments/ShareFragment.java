@@ -1,6 +1,5 @@
 package com.ilm.visitingcard_v11.Fragments;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.ilm.visitingcard_v11.NavigationActivity;
 import com.ilm.visitingcard_v11.R;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -33,7 +31,6 @@ public class ShareFragment extends Fragment {
         gen_img = mView.findViewById(R.id.qr_image);
         Button gen_btn = mView.findViewById(R.id.qr_button);
         mAuth = FirebaseAuth.getInstance();
-        Button back_btn = mView.findViewById(R.id.back_btn);
 
         //GENERATE QR-CODE FOR THE USER ID
 
@@ -43,20 +40,13 @@ public class ShareFragment extends Fragment {
                 text2Qr = mAuth.getUid();
                 MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                 try{
-                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,300,300);
+                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,500,500);
                     BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                     Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
                     gen_img.setImageBitmap(bitmap);
                 }catch (WriterException e){
                     e.printStackTrace();
                 }
-            }
-        });
-
-        back_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), NavigationActivity.class));
             }
         });
         return mView;

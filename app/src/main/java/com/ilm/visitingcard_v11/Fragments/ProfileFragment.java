@@ -42,7 +42,7 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment {
 
     private EditText userName,userPosition,userMail,userAddress,userPhone,userCompany,userSite,workPhone;
-    private ImageView cardFront,cardBack;
+    private ImageView cardFront,cardBack,profilePic;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     int i;
@@ -58,6 +58,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_profile, container, false);
+        profilePic = mView.findViewById(R.id.user_image);
         userName = mView.findViewById(R.id.user_profile_name);
         userMail = mView.findViewById(R.id.user_profile_mail);
         userPhone = mView.findViewById(R.id.user_profile_phone);
@@ -82,6 +83,7 @@ public class ProfileFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
+                    Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
                     Picasso.get().load(itemsModel.getFront()).into(cardFront);
                     Picasso.get().load(itemsModel.getBack()).into(cardBack);
                     userName.setText(Objects.requireNonNull(itemsModel).getfName());
@@ -96,13 +98,15 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        cardFront.setOnClickListener(new View.OnClickListener() {
+        profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(Intent.createChooser(new Intent().
-                        setAction(Intent.ACTION_GET_CONTENT).
-                        setType("image/*"),"Select one Image"),
-                        CODE_IMAGE_GALLERY);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+                startActivityForResult(Intent.createChooser(intent,"Select multiple images"),
+                        CODE_MULTI_IMG_GALLERY);
             }
         });
 
@@ -171,9 +175,10 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == CODE_IMAGE_GALLERY && resultCode == RESULT_OK){
-            Uri imageUri = data.getData();
-            if(imageUri != null){
-                cardFront.setImageURI(imageUri);
+            Uri profilePicUri = data.getData();
+            if(profilePicUri != null){
+                profilePic.setImageURI(profilePicUri);
+                ImageList.add(2,profilePicUri);
             }
         }else if(requestCode == CODE_MULTI_IMG_GALLERY && resultCode == RESULT_OK){
             ClipData clipData = data.getClipData();
@@ -206,7 +211,7 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void onSuccess(Uri uri) {
                             String url = String.valueOf(uri);
-                            StoreLink(url,user);
+                            StoreLink(url,user,i);
                         }
                     });
                 }
@@ -215,8 +220,14 @@ public class ProfileFragment extends Fragment {
     }
 
     //UPLOAD IMAGE TO DATABASE
-    private void StoreLink(String url,Map<Object,Object> user) {
-        user.put("profilePic",url);
+    private void StoreLink(String url,Map<Object,Object> user,int i) {
+        if(i == 0){
+            user.put("front",url);
+        }else if( i == 1){
+            user.put("back",url);
+        }else if( i == 5){
+            user.put("profilePic", url);
+        }
 
         db.collection("user").document(mAuth.getUid())
                 .set(user)
@@ -233,15 +244,15 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void openGalleryFront() {
-        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent,1);
-    }
-
-    private void openGalleryBack() {
-        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent,1);
-    }
+//    private void openGalleryFront() {
+//        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//        galleryIntent.setType("image/*");
+//        startActivityForResult(galleryIntent,1);
+//    }
+//
+//    private void openGalleryBack() {
+//        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//        galleryIntent.setType("image/*");
+//        startActivityForResult(galleryIntent,1);
+//    }
 }
