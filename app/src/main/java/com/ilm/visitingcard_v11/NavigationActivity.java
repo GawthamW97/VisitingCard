@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -66,13 +65,13 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
 //                    Log.e("list", Objects.requireNonNull(itemsModel).getfName().toString());
 
-                    userName.setText(itemsModel.getfName().toString());
-                    userMail.setText(itemsModel.geteMail().toString());
+                    userName.setText(itemsModel.getfName());
+                    userMail.setText(itemsModel.geteMail());
 //                    Picasso.get().load(itemsModel.getProfilePic()).into(userImage);
 
-                    Log.e("Success", "success");
+                    Log.e("TAG", "Success");
                 }else{
-                    Log.e("Fail", "Failed");
+                    Log.e("TAG", "Failed");
                 }
             }
         });
@@ -103,7 +102,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         super.onBackPressed();
     }
 
-    Fragment fragment = null;
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         drawerLayout.closeDrawer(GravityCompat.START);

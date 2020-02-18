@@ -3,6 +3,7 @@ package com.ilm.visitingcard_v11;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 public class EditActivity extends AppCompatActivity {
 
+    Uri pic;
     TextView title;
     EditText fName,lName,company,pNo,address,position,website,industry;
     Button btnUpload, images;
@@ -42,6 +45,7 @@ public class EditActivity extends AppCompatActivity {
 
     ArrayList<Uri> ImageList = new ArrayList<Uri>();
 
+    Intent getPic = getIntent();
     Uri imageUri;
 
     @Override
@@ -66,14 +70,12 @@ public class EditActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-
         images.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openGallery();
             }
         });
-
 
         // UPLOAD THE DATA THAT WAS FILLED IN THE FIELDS BY THE USER
         btnUpload.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +91,6 @@ public class EditActivity extends AppCompatActivity {
                 String userIndustry = industry.getText().toString().trim();
                 List<String> user_conn_list = new ArrayList<>();
 
-
                 Map<Object,Object> user = new HashMap<>();
                 user.put("fName",firstName);
                 user.put("lName",lastName);
@@ -101,10 +102,11 @@ public class EditActivity extends AppCompatActivity {
                 user.put("website",companySite);
                 user.put("industry",userIndustry);
                 user.put("connection",user_conn_list);
+//                user.put("profilePic",getPic.getSerializableExtra("pic"));
                 uploadImage(user);
 
-                db.collection("user").document(mAuth.getUid())
-                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.collection("user").document(mAuth.getCurrentUser().getUid())
+                        .set(user,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(EditActivity.this,"Successfully Updated",Toast.LENGTH_SHORT).show();
@@ -132,11 +134,9 @@ public class EditActivity extends AppCompatActivity {
 
     private void uploadImage(final Map<Object, Object> user){
         StorageReference Ref = FirebaseStorage.getInstance().getReference();
-
         for(i = 0; i<ImageList.size();i++){
             Uri image = ImageList.get(i);
             final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
-
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -144,7 +144,8 @@ public class EditActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Uri uri) {
                             String url = String.valueOf(uri);
-                            StoreLink(url,user);
+                            Log.e("pics",url);
+                            StoreLink(url,user,i);
                         }
                     });
                 }
@@ -152,11 +153,14 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private void StoreLink(String url,Map<Object,Object> user) {
-        user.put("profilePic",url);
-
-        db.collection("user").document(mAuth.getUid())
-                .set(user)
+    private void StoreLink(String url, Map<Object, Object> user, int i) {
+        if(i == 0){
+            user.put("front",url);
+        }else if(i == 1){
+            user.put("back",url);
+        }
+        db.collection("user").document(mAuth.getCurrentUser().getUid())
+                .set(user, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

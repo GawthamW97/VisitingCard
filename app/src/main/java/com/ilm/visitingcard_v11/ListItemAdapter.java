@@ -2,7 +2,6 @@ package com.ilm.visitingcard_v11;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,8 +43,8 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
             }
         }
 
-        public ListItemAdapter(ArrayList<ItemsModel> exampleList) {
-            mList = exampleList;
+        public ListItemAdapter(ArrayList<ItemsModel> itemList) {
+            mList = itemList;
         }
 
         @Override
@@ -58,9 +59,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         public void onBindViewHolder(ListViewHolder holder, int position) {
             ItemsModel currentItem = mList.get(position);
             i = position;
-            holder.mImageView.setImageURI(Uri.parse(currentItem.getProfilePic()));
+            Picasso.get().load(currentItem.getProfilePic()).into(holder.mImageView);
             holder.mTextView1.setText(currentItem.getfName());
-            holder.mTextView2.setText(currentItem.geteMail());
+            holder.mTextView2.setText(currentItem.getCompany());
 
         }
 

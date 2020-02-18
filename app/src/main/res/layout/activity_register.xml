@@ -69,8 +69,7 @@
         android:textColor="#ffffff"
         android:layout_below="@+id/input_re_password"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_shape"
-        android:backgroundTint="@color/bootstrap_brand_primary" />
+        android:background="@drawable/rounded_shape"/>
 
     <ProgressBar
         android:id="@+id/regProgressBar"

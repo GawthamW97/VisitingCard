@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/profile_container"
     tools:context=".ItemsPreviewActivity">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -73,6 +73,7 @@
         android:layout_below="@+id/cardView"
         android:layout_centerHorizontal="true"
         android:id="@+id/cardView02"
+        android:elevation="1dp"
         app:cardCornerRadius="30dp">
     <LinearLayout
         android:layout_width="350dp"
@@ -88,7 +89,8 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_email_black_24dp"/>
+                app:srcCompat="@drawable/ic_email_black_24dp"
+                android:contentDescription="Email" />
             <TextView
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
@@ -107,7 +109,8 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_smartphone"/>
+                app:srcCompat="@drawable/ic_smartphone"
+                android:contentDescription="Personal Phone" />
             <TextView
                 android:textSize="20sp"
                 android:layout_gravity="center"
@@ -126,7 +129,8 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_phone_black_24dp"/>
+                app:srcCompat="@drawable/ic_phone_black_24dp"
+                android:contentDescription="Work Phone" />
             <TextView
                 android:textSize="20sp"
                 android:layout_gravity="center"
@@ -141,11 +145,13 @@
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/address_layout">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_location"/>
+                app:srcCompat="@drawable/ic_location"
+                android:contentDescription="Address" />
             <TextView
                 android:textSize="20sp"
                 android:layout_gravity="center"
@@ -163,14 +169,15 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_web"/>
+                app:srcCompat="@drawable/ic_web"
+                android:contentDescription="Website" />
             <TextView
                 android:textSize="20sp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/user_web"
+                android:id="@+id/conn_web"
                 android:text="Website Link"/>
         </LinearLayout>
 
@@ -185,14 +192,39 @@
         android:id="@+id/layout03"
         android:orientation="horizontal"
         android:layout_alignStart="@+id/cardView02">
-        <ImageView
+        <ImageButton
             android:layout_width="175dp"
             android:layout_height="90dp"
-            android:id="@+id/front"/>
+            android:id="@+id/front"
+            android:background="@android:color/white"
+            android:contentDescription="Front"
+            android:scaleType="centerCrop"
+            android:src="@drawable/front"/>
 
-        <ImageView
+        <ImageButton
             android:layout_width="175dp"
             android:layout_height="90dp"
-            android:id="@+id/back"/>
+            android:id="@+id/back"
+            android:background="@android:color/white"
+            android:contentDescription="Back"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:id="@+id/expanded_image"
+        android:background="#80000000"/>
+    <Button
+        android:id="@+id/conn_delete"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Card"
+        android:textAllCaps="false"
+        style="@style/AppTheme.RoundedCornerMaterialButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"/>
 </RelativeLayout>

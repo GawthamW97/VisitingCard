@@ -1,6 +1,7 @@
 package com.ilm.visitingcard_v11.Fragments;
 
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,10 +50,9 @@ public class ProfileFragment extends Fragment {
     int i;
     private final int CODE_IMAGE_GALLERY = 1;
     private final int CODE_MULTI_IMG_GALLERY = 2;
+    Map<Object,Object> user;
 
-    private ArrayList<Uri> ImageList = new ArrayList<Uri>();
-
-    Uri imageUri;
+    private ArrayList<Uri> ImageList = new ArrayList<>();
     private View mView;
 
     @Nullable
@@ -75,7 +76,7 @@ public class ProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         // GET THE DETAILS OF THE CURRENT USER FROM THE DATABASES
-        db.collection("user").document(mAuth.getCurrentUser().getUid().toString())
+        db.collection("user").document(mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -135,7 +136,7 @@ public class ProfileFragment extends Fragment {
                 String companySite = userSite.getText().toString();
                 int workNumber = Integer.parseInt(workPhone.getText().toString().trim());
 
-                Map<Object,Object> user = new HashMap<>();
+                user = new HashMap<>();
                 user.put("fName",firstName);
                 user.put("company",companyName);
                 user.put("pNo",phoneNumber);
@@ -145,18 +146,34 @@ public class ProfileFragment extends Fragment {
                 user.put("eMail",mAuth.getCurrentUser().getEmail());
                 user.put("website",companySite);
                 uploadImage(user);
-                db.collection("user").document(mAuth.getUid())
-                        .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(ProfileFragment.this.getActivity(),"Successfully Updated",Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                db.collection("user").document(mAuth.getUid())
+                                        .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(ProfileFragment.this.getActivity(),"Successfully Updated",Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(ProfileFragment.this.getActivity(),"Failed to Update",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(ProfileFragment.this.getActivity(),"Failed to Update",Toast.LENGTH_SHORT).show();
-                    }
-                });
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure that you want to update your profile?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
             }
         });
 
@@ -243,16 +260,4 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-
-//    private void openGalleryFront() {
-//        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-//        galleryIntent.setType("image/*");
-//        startActivityForResult(galleryIntent,1);
-//    }
-//
-//    private void openGalleryBack() {
-//        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-//        galleryIntent.setType("image/*");
-//        startActivityForResult(galleryIntent,1);
-//    }
 }

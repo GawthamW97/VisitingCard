@@ -38,11 +38,11 @@ public class HomeFragment extends Fragment {
     private ListItemAdapter listAdapter;
     private RecyclerView itemListView;
     private EditText searchList;
-    View mView;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    ArrayList<ItemsModel> itemList;
-    List<String> conn_list = null;
+    private View mView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private ArrayList<ItemsModel> itemList;
+    private List<String> conn_list = null;
 
     @Nullable
     @Override
@@ -87,6 +87,8 @@ public class HomeFragment extends Fragment {
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         if((conn_list != null)&&conn_list.contains(document.getId())){
                             ItemsModel model = document.toObject(ItemsModel.class);
+                            // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
+                            model.setUID(document.getId());
                             itemList.add(model);
                             Log.e("ID",conn_list.toString());
                         }else{
@@ -151,12 +153,11 @@ public class HomeFragment extends Fragment {
         //looping through existing elements
         for (ItemsModel model : itemList) {
             //if the existing elements contains the search input
-            if ((model.getfName().toLowerCase().trim().contains(text.toLowerCase())) || (model.geteMail().toLowerCase().contains(text.toLowerCase()))){
+            if ((model.getfName().toLowerCase().trim().contains(text.toLowerCase())) || (model.getCompany().toLowerCase().contains(text.toLowerCase()))){
                 //adding the element to filtered list
                 filterdNames.add(model);
             }
         }
-
         //calling a method of the adapter class and passing the filtered list
         listAdapter.filterList(filterdNames);
     }
