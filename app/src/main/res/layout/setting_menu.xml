@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/title"
+        android:layout_margin="15dp"/>
+
+    <Button
+        android:id="@+id/set_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Email Address"
+        android:layout_below="@+id/title"
+        android:gravity="start"
+        android:textSize="20sp"
+        android:textColor="@color/bootstrap_gray"
+        android:background="@color/bootstrap_brand_secondary_fill"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:strokeColor="@color/bootstrap_brand_secondary_border"
+        app:rippleColor="@color/bootstrap_brand_danger"/>
+
+    <Button
+        android:id="@+id/set_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:layout_below="@+id/set_mail"
+        android:gravity="start"
+        android:textSize="20sp"
+        android:textColor="@color/bootstrap_gray"
+        android:background="@color/bootstrap_brand_secondary_fill"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:strokeColor="@color/bootstrap_brand_secondary_border"
+        app:rippleColor="@color/bootstrap_brand_danger"/>
+</RelativeLayout>

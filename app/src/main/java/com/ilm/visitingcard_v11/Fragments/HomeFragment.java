@@ -161,6 +161,16 @@ public class HomeFragment extends Fragment {
         //calling a method of the adapter class and passing the filtered list
         listAdapter.filterList(filterdNames);
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        FragmentManager fragmentManager = this.
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.home_container, new HomeFragment())
+//                .commit();
+    }
 }
 
 

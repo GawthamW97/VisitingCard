@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     android:id="@+id/profile_container"
     tools:context=".ItemsPreviewActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:id="@+id/expanded_image"
+        android:background="#80000000"
+        android:elevation="10dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -41,6 +48,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:id="@+id/cardView"
+        android:elevation="1dp"
         app:cardCornerRadius="30dp">
 
         <LinearLayout
@@ -210,12 +218,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/back"/>
     </LinearLayout>
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:id="@+id/expanded_image"
-        android:background="#80000000"/>
     <Button
         android:id="@+id/conn_delete"
         android:padding="10dp"

@@ -173,7 +173,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             });
 
             //ASK USER FOR A CONFIRMATION TO ADD THE NEW CARD
-
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -189,7 +188,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Do you want to add this contact?").setPositiveButton("Yes", dialogClickListener)
+            builder.setMessage("Do you want to add "+itemsModel.getfName()+"?").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
         }
 

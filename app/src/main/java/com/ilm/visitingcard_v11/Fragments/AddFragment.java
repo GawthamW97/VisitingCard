@@ -31,7 +31,7 @@ public class AddFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mView = inflater.inflate(R.layout.add_people, container, false);
         Button bt_scan = mView.findViewById(R.id.btn_scan);
-        Button gen_btn = mView.findViewById(R.id.qr_button);
+//        Button gen_btn = mView.findViewById(R.id.qr_button);
         gen_img = mView.findViewById(R.id.qr_image);
         mAuth = FirebaseAuth.getInstance();
 
@@ -50,21 +50,16 @@ public class AddFragment extends Fragment {
             }
         });
 
-        gen_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                text2Qr = mAuth.getUid();
-                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                try{
-                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,500,500);
-                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                    gen_img.setImageBitmap(bitmap);
-                }catch (WriterException e){
-                    e.printStackTrace();
-                }
-            }
-        });
+        text2Qr = mAuth.getUid();
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try{
+            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,500,500);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            gen_img.setImageBitmap(bitmap);
+        }catch (WriterException e){
+            e.printStackTrace();
+        }
         return mView;
     }
 }

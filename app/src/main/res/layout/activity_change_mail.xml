@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChangeMailActivity">
+        <TextView
+            android:layout_marginTop="150dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Email"
+            android:textSize="25sp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/title"
+            android:fontFamily="sans-serif-black"/>
+        <TextView
+            android:gravity="center"
+            android:padding="18dp"
+            android:layout_below="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:text="After Email is changed you will be redirected to the login page to verify "
+            android:id="@+id/desc"/>
+        <EditText
+            android:background="@android:drawable/editbox_background"
+            android:layout_below="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="New Email Address"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:id="@+id/edit_mail"/>
+
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirm_tab"
+            android:layout_below="@+id/edit_mail">
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:text="Cancel"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
+                android:id="@+id/confirm"
+                android:layout_marginLeft="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:text="Confirm"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </RelativeLayout>
+</RelativeLayout>

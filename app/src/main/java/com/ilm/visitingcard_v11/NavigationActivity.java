@@ -29,6 +29,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.ilm.visitingcard_v11.Fragments.AddFragment;
 import com.ilm.visitingcard_v11.Fragments.HomeFragment;
 import com.ilm.visitingcard_v11.Fragments.ProfileFragment;
+import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -129,6 +130,13 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(NavigationActivity.this,LoginActivity.class));
+        }
+
+        if(menuItem.getItemId() == R.id.nav_settings){
+            fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container_fragment,new SettingFragment());
+            fragmentTransaction.commit();
         }
                 return true;
     }
