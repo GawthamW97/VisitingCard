@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11.Fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.ilm.visitingcard_v11.NavigationActivity;
 import com.ilm.visitingcard_v11.R;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -31,12 +33,19 @@ public class AddFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mView = inflater.inflate(R.layout.add_people, container, false);
         Button bt_scan = mView.findViewById(R.id.btn_scan);
-//        Button gen_btn = mView.findViewById(R.id.qr_button);
+        ImageView backBtn = mView.findViewById(R.id.back_btn);
         gen_img = mView.findViewById(R.id.qr_image);
         mAuth = FirebaseAuth.getInstance();
 
-        //ADD THE SCANNED USER PROFILE TO THE CURRENT USER'S CONNECTION LIST
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+                startActivity(new Intent(getContext(), NavigationActivity.class));
+            }
+        });
 
+        //ADD THE SCANNED USER PROFILE TO THE CURRENT USER'S CONNECTION LIST
         bt_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +62,7 @@ public class AddFragment extends Fragment {
         text2Qr = mAuth.getUid();
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try{
-            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,500,500);
+            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,800,800);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             gen_img.setImageBitmap(bitmap);

@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ilm.visitingcard_v11.Fragments.DialogFragment;
+import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 
 public class ChangeMailActivity extends AppCompatActivity implements DialogFragment.DialogList {
 
@@ -40,6 +41,13 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
             @Override
             public void onClick(View v) {
                 openDialog();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChangeMailActivity.this, NavigationActivity.class));
             }
         });
     }

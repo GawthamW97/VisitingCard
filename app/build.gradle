@@ -68,8 +68,9 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     //Dexter
     implementation 'com.karumi:dexter:6.0.2'
-//    ImageCropper
+    //ImageCropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-//    //Image Cropper
-//    implementation 'com.github.yalantis:ucrop:2.2.4'
+    //Refresh Layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.github.yalantis:ucrop:2.2.4'
 }

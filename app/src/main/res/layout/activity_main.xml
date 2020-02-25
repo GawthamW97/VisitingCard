@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/pullToRefresh">
+<LinearLayout
+    android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:layout_marginTop="70dp"
     android:id="@+id/home_container"
     tools:menu="@menu/menu">
     <androidx.cardview.widget.CardView
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:cardCornerRadius="30dp">
+        app:cardCornerRadius="20dp">
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:layout_height="wrap_content">
             <ImageView
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_search"/>
+                app:srcCompat="@drawable/ic_search"
+                android:layout_marginStart="3dp"/>
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="250dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:hint="Search"
                 android:layout_gravity="center"
@@ -39,3 +45,4 @@
         android:layout_height="match_parent">
     </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

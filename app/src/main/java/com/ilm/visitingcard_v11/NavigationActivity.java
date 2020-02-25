@@ -30,6 +30,9 @@ import com.ilm.visitingcard_v11.Fragments.AddFragment;
 import com.ilm.visitingcard_v11.Fragments.HomeFragment;
 import com.ilm.visitingcard_v11.Fragments.ProfileFragment;
 import com.ilm.visitingcard_v11.Fragments.SettingFragment;
+import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -46,8 +49,8 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
-        View mView = getLayoutInflater().inflate(R.layout.nav_header,null);
 
+        View mView = getLayoutInflater().inflate(R.layout.nav_header,null);
         userName = mView.findViewById(R.id.nav_user);
         userMail = mView.findViewById(R.id.nav_mail);
         userImage = mView.findViewById(R.id.nav_image);
@@ -55,7 +58,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         final FirebaseAuth mAuth =FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("user").document(mAuth.getCurrentUser().getUid())
+        db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -63,12 +66,12 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                 Log.e("Fail", mAuth.getCurrentUser().getUid());
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    ItemsModel itemsModel = doc.toObject(ItemsModel.class);
+                    ItemsModel itemsModel = Objects.requireNonNull(doc).toObject(ItemsModel.class);
 //                    Log.e("list", Objects.requireNonNull(itemsModel).getfName().toString());
 
-                    userName.setText(itemsModel.getfName());
+                    userName.setText(Objects.requireNonNull(itemsModel).getfName());
                     userMail.setText(itemsModel.geteMail());
-//                    Picasso.get().load(itemsModel.getProfilePic()).into(userImage);
+                    Picasso.get().load(itemsModel.getProfilePic()).into(userImage);
 
                     Log.e("TAG", "Success");
                 }else{
@@ -144,6 +147,13 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     //AFTER THE SCAN IS COMPLETED AND THE SCANNED USER-ID IS PASSED TO 'ItemsPreviewActivity.java'
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("TAG","Calls Nav"+requestCode);
+//        for (Fragment fragment : fragmentManager.getFragments()) {
+//            Log.e("TAG","Calls");
+//
+//            fragment.onActivityResult(requestCode, resultCode, data);
+//        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
@@ -154,9 +164,8 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                 Toast.makeText(this, "scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(this,ItemsPreviewActivity.class).putExtra("id",result.getContents()));
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }
 

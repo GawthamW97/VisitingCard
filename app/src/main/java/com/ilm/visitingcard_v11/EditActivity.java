@@ -33,7 +33,6 @@ import java.util.Map;
 
 public class EditActivity extends AppCompatActivity {
 
-    Uri pic;
     TextView title;
     EditText fName,lName,company,pNo,address,position,website,industry;
     Button btnUpload, images;
@@ -45,7 +44,6 @@ public class EditActivity extends AppCompatActivity {
 
     ArrayList<Uri> ImageList = new ArrayList<Uri>();
 
-    Intent getPic = getIntent();
     Uri imageUri;
 
     @Override

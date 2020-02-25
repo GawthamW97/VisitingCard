@@ -35,12 +35,13 @@ import java.util.Objects;
 public class ItemsPreviewActivity extends AppCompatActivity {
 
     ImageView profilePic;
-    TextView userName,userPosition,userMail,userAddress,userPhone,userCompany,userWno;
+    TextView userName,userPosition,userMail,userAddress,userPhone,userCompany,userWno,userCompWeb;
     Button delete_btn;
     ItemsModel itemsModel;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userID;
+    ItemsModel model;
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -73,6 +74,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         userAddress = findViewById(R.id.conn_location);
         userCompany = findViewById(R.id.conn_company);
         userWno = findViewById(R.id.conn_work_phone);
+        userCompWeb = findViewById(R.id.conn_web);
 
         //TODO: View user profile from the list
         final Intent intent = getIntent();
@@ -84,7 +86,18 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
             userCompany.setText(Objects.requireNonNull(itemsModel).getCompany());
             userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
-            userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
+            if(itemsModel.getWebsite() == null){
+                LinearLayout linearLayout = findViewById(R.id.website_layout);
+                linearLayout.setVisibility(View.GONE);
+            }else{
+                userCompWeb.setText(itemsModel.getWebsite());
+            }
+            if(itemsModel.getwNo() == 0){
+                LinearLayout linearLayout = findViewById(R.id.work_phone_layout);
+                linearLayout.setVisibility(View.GONE);
+            }else{
+                userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
+            }
             delete_btn = findViewById(R.id.conn_delete);
             if(itemsModel.getAddress() == null){
                 LinearLayout linearLayout = findViewById(R.id.address_layout);
@@ -92,6 +105,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             }else{
                 userAddress.setText(itemsModel.getAddress());
             }
+
             cardFront.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -142,29 +156,48 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful()){
                         DocumentSnapshot doc = task.getResult();
-                        final ItemsModel itemsModel = doc.toObject(ItemsModel.class);
-                        Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
-                        userName.setText(Objects.requireNonNull(itemsModel).getfName());
-                        userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
-                        userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
-                        userCompany.setText(itemsModel.getCompany());
-                        userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
-                        userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
-                        userAddress.setText(itemsModel.getAddress());
+                        model = doc.toObject(ItemsModel.class);
+                        Picasso.get().load(model.getProfilePic()).into(profilePic);
+                        userName.setText(Objects.requireNonNull(model).getfName());
+                        userMail.setText(Objects.requireNonNull(model).geteMail());
+                        userPosition.setText(Objects.requireNonNull(model).getPosition());
+                        userCompany.setText(model.getCompany());
+                        userPhone.setText(String.valueOf(Objects.requireNonNull(model).getpNo()));
+                        userWno.setText(String.valueOf(Objects.requireNonNull(model).getwNo()));
+                        userAddress.setText(model.getAddress());
 
                         cardFront.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                zoomImageFromThumb(cardFront,itemsModel.getFront());
+                                zoomImageFromThumb(cardFront,model.getFront());
                             }
                         });
 
                         cardBack.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                zoomImageFromThumb(cardBack,itemsModel.getBack());
+                                zoomImageFromThumb(cardBack,model.getBack());
                             }
                         });
+
+                        //ASK USER FOR A CONFIRMATION TO ADD THE NEW CARD
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayUnion(userID));
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
+                                        break;
+                                }
+                            }
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ItemsPreviewActivity.this);
+                        builder.setMessage("Do you want to add "+userName.getText().toString()+"?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
                         Log.e("TAG", "Success");
                     }else{
                         Log.e("TAG", "Fail");
@@ -172,24 +205,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 }
             });
 
-            //ASK USER FOR A CONFIRMATION TO ADD THE NEW CARD
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which){
-                        case DialogInterface.BUTTON_POSITIVE:
-                            db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayUnion(userID));
-                            break;
-
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
-                            break;
-                    }
-                }
-            };
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Do you want to add "+itemsModel.getfName()+"?").setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();
         }
 
         //TODO:On Click Activity for Phone Numbers and Email Address
@@ -223,7 +238,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         });
     }
 
-    //TODO:ZOOM THE SELECTED CARD FOR THE USER TO VIEW
+    //TODO:ENLARGE THE SELECTED CARD FOR THE USER TO VIEW
 
     private void zoomImageFromThumb(final View thumbView, String imageResId) {
         // If there's an animation in progress, cancel it

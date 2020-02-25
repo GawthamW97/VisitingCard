@@ -5,41 +5,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_shape"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/back_button"
+        android:id="@+id/back_btn"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
         android:textSize="30sp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-black"
         android:layout_centerHorizontal="true"
         android:id="@+id/title"
         android:layout_margin="15dp"/>
 
     <Button
+        android:textAllCaps="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:id="@+id/set_mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Change Email Address"
         android:layout_below="@+id/title"
         android:gravity="start"
+        android:paddingTop="10dp"
         android:textSize="20sp"
         android:textColor="@color/bootstrap_gray"
-        android:background="@color/bootstrap_brand_secondary_fill"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        app:strokeColor="@color/bootstrap_brand_secondary_border"
-        app:rippleColor="@color/bootstrap_brand_danger"/>
+        android:background="@drawable/fui_idp_button_background_google"/>
 
     <Button
+        android:layout_marginTop="5dp"
+        android:textAllCaps="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:id="@+id/set_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Change Password"
         android:layout_below="@+id/set_mail"
         android:gravity="start"
+        android:paddingTop="10dp"
         android:textSize="20sp"
         android:textColor="@color/bootstrap_gray"
-        android:background="@color/bootstrap_brand_secondary_fill"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        app:strokeColor="@color/bootstrap_brand_secondary_border"
-        app:rippleColor="@color/bootstrap_brand_danger"/>
+        android:background="@drawable/fui_idp_button_background_google"/>
+    <Button
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Deactivate Account"
+        android:textAllCaps="false"
+        android:background="@drawable/fui_idp_button_background_google"
+        android:textSize="20sp"
+        android:textColor="@color/bootstrap_gray"
+        android:layout_below="@id/set_password"
+        android:gravity="start"
+        android:paddingTop="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
 </RelativeLayout>

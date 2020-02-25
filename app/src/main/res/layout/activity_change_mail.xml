@@ -27,7 +27,7 @@
         <EditText
             android:background="@android:drawable/editbox_background"
             android:layout_below="@+id/desc"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="New Email Address"
             android:layout_centerHorizontal="true"
@@ -35,31 +35,30 @@
             android:id="@+id/edit_mail"/>
 
         <RelativeLayout
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/confirm_tab"
             android:layout_below="@+id/edit_mail">
-
-            <TextView
+            <Button
                 android:id="@+id/cancel"
+                android:layout_marginLeft="130dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.MaterialComponents.Body2"
                 android:text="Cancel"
-                android:textSize="18sp"
+                android:textAllCaps="false"
+                style="@style/AppTheme.RoundedCornerMaterialButton"
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <TextView
+            <Button
                 android:id="@+id/confirm"
-                android:layout_marginLeft="100dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:textAllCaps="false"
+                style="@style/AppTheme.RoundedCornerMaterialButton"
                 android:text="Confirm"
-                android:textSize="18sp"
                 android:clickable="true"
                 android:focusable="true"/>
         </RelativeLayout>

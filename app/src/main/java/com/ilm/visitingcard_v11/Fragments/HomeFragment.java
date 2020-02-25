@@ -13,15 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -50,6 +49,22 @@ public class HomeFragment extends Fragment {
 
         mView = inflater.inflate(R.layout.activity_main,container,false);
 
+        showData(mView);
+
+        final SwipeRefreshLayout pullToRefresh = mView.findViewById(R.id.pullToRefresh);
+        // Refresh the view on pull down
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showData(mView);
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
+     return mView;
+    }
+
+    private void showData(View mView) {
         searchList = mView.findViewById(R.id.search_list);
         itemListView = mView.findViewById(R.id.item_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HomeFragment.this.getActivity());
@@ -90,7 +105,7 @@ public class HomeFragment extends Fragment {
                             // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
                             model.setUID(document.getId());
                             itemList.add(model);
-                            Log.e("ID",conn_list.toString());
+//                                            Log.e("ID",conn_list.toString());
                         }else{
                             continue;
                         }
@@ -98,7 +113,7 @@ public class HomeFragment extends Fragment {
                     listAdapter = new ListItemAdapter(itemList);
                     itemListView.setAdapter(listAdapter);
                 } else {
-                    Log.d("MissionActivity", "Error getting documents: ", task.getException());
+                    Log.d("TAG", "Error getting documents: ", task.getException());
                 }
             }
         });
@@ -122,28 +137,6 @@ public class HomeFragment extends Fragment {
                 filter(s.toString());
             }
         });
-
-        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-                Log.e("POS",String.valueOf(position));
-//                Log.e("POS",String.valueOf(conn_list.get(position)));
-//                Log.e("POS",String.valueOf(conn_list));
-                db.collection("user").document(mAuth.getCurrentUser().getUid())
-                        .update("conn", FieldValue.arrayRemove(conn_list.get(position)).toString());
-                conn_list.remove(position);
-                listAdapter.notifyItemRemoved(position);
-            }
-        });
-
-        helper.attachToRecyclerView(itemListView);
-     return mView;
     }
 
     private void filter(String text) {

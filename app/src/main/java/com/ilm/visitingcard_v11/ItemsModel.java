@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ItemsModel implements Serializable {
-    private String fName, lName,eMail,profilePic,uName, front, back,position,company,address,UID;
+    private String fName, lName,eMail,profilePic,uName, front, back,position,company,address,UID,website;
     private int pNo,wNo;
     private List<String> conn;
 
@@ -135,5 +135,13 @@ public class ItemsModel implements Serializable {
 
     public void setUID(String UID) {
         this.UID = UID;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 }
