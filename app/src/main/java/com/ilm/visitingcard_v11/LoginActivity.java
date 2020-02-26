@@ -17,14 +17,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText userMail,userPassword;
     private Button btnLogin;
     private ProgressBar loginProgress;
     private FirebaseAuth mAuth;
-    private Intent MainActivity;
-    private Intent RegisterActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.registerBtn);
         loginProgress = findViewById(R.id.login_progress);
         mAuth = FirebaseAuth.getInstance();
-        MainActivity = new Intent(this, com.ilm.visitingcard_v11.NavigationActivity.class);
-        RegisterActivity = new Intent(this, com.ilm.visitingcard_v11.RegisterActivity.class);
 
         loginProgress.setVisibility(View.INVISIBLE);
 
@@ -55,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (mail.isEmpty() || password.isEmpty()){
                     showMessage("Please Verify all fields");
+                    loginProgress.setVisibility(View.INVISIBLE);
+                    btnLogin.setVisibility(View.VISIBLE);
                 }
                 else{
                     signIn(mail,password);
@@ -66,14 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(RegisterActivity);
+                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
             }
         });
     }
 
     //USER LOGIN WITH MAIL ADDRESS AND PASSWORD
     private void signIn(String mail, String password) {
-
         mAuth.signInWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -84,16 +83,17 @@ public class LoginActivity extends AppCompatActivity {
                     updateUI();
                 }
                 else{
-                    showMessage(task.getException().getMessage());
+                    showMessage(Objects.requireNonNull(task.getException()).getMessage());
                     Toast.makeText(LoginActivity.this,"Log in Failed"+task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                    loginProgress.setVisibility(View.INVISIBLE);
+                    btnLogin.setVisibility(View.VISIBLE);
                 }
-
             }
         });
     }
 
     private void updateUI() {
-        startActivity(MainActivity);
+        startActivity(new Intent(LoginActivity.this,NavigationActivity.class));
         finish();
     }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ItemsPreviewActivity">
+    tools:context=".CreateActivity">
 
     <TextView
         android:layout_marginTop="20dp"
@@ -159,39 +159,16 @@
             android:layout_height="90dp"
             app:srcCompat="@drawable/ic_person_black_24dp"/>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginTop="30dp"
+    <Button
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="15dp"
+        android:id="@+id/upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp">
-
-        <Button
-            android:padding="15dp"
-            android:id="@+id/selectImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Card Images"
-            android:textAllCaps="false"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/bootstrap_brand_primary"
-            android:background="@drawable/rounded_shape"/>
-
-        <Button
-            android:padding="15dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/bootstrap_brand_primary"
-            android:textColor="#ffffff"
-            android:background="@drawable/rounded_shape"/>
-    </LinearLayout>
-
-
+        android:text="Upload"
+        android:textAllCaps="false"
+        style="@style/AppTheme.RoundedCornerMaterialButton"/>
 
 </RelativeLayout>

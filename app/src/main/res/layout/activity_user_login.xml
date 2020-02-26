@@ -6,31 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
-    android:background="#fff">
-    <TextView
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to E-Card"
-        android:layout_centerHorizontal="true"
-        android:textSize="25sp"
-        style="@style/TextAppearance.MaterialComponents.Caption"/>
+    android:background="@drawable/welcome">
 
     <EditText
+        android:layout_centerVertical="true"
         android:id="@+id/login_mail"
-        android:layout_width="265dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:ems="10"
-        android:hint="Mail Adress"
+        android:hint="Email Adress"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:inputType="textPersonName"/>
 
     <EditText
         android:layout_marginTop="10dp"
         android:id="@+id/login_password"
-        android:layout_width="265dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:ems="10"
