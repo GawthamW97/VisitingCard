@@ -99,7 +99,7 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
-                    Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
+                    Picasso.get().load(Objects.requireNonNull(itemsModel).getProfilePic()).into(profilePic);
                     Picasso.get().load(itemsModel.getFront()).into(cardFront);
                     Picasso.get().load(itemsModel.getBack()).into(cardBack);
                     userName.setText(Objects.requireNonNull(itemsModel).getfName());
@@ -109,7 +109,7 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
                     userPhone.setText(String.valueOf(itemsModel.getpNo()));
                     workPhone.setText(String.valueOf(itemsModel.getwNo()));
                     userAddress.setText(itemsModel.getAddress());
-                    Log.e("Success", "success");
+                    Log.e("Success", "Success");
                 }
             }
         });

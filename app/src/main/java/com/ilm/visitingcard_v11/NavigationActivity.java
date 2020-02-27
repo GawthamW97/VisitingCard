@@ -58,6 +58,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         final FirebaseAuth mAuth =FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+//        mAuth.signOut();
         db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -113,6 +114,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new HomeFragment());
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
 
@@ -120,6 +122,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new ProfileFragment());
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
 
@@ -127,6 +130,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new AddFragment());
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
         if(menuItem.getItemId() == R.id.nav_logout){
@@ -139,6 +143,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new SettingFragment());
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
                 return true;
@@ -157,11 +162,8 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                System.out.println("Cancelled");
                 Toast.makeText(this, "You cancelled the scanning!", Toast.LENGTH_LONG).show();
             } else {
-                System.out.println("Worked: " + result.getContents());
-                Toast.makeText(this, "scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(this,ItemsPreviewActivity.class).putExtra("id",result.getContents()));
             }
         }

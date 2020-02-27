@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DeleteAccountActivity">
+
+    <TextView
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Account"
+        android:textSize="30sp"
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:fontFamily="sans-serif-black"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/title"/>
+
+    <TextView
+        android:layout_marginTop="80dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:layout_below="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/delete_account_message"
+        android:id="@+id/message"/>
+
+    <EditText
+        android:layout_marginTop="20dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="User Email Address"
+        android:background="@android:drawable/editbox_background"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/message"
+        android:id="@+id/curr_user_mail"/>
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="User Password"
+        android:layout_below="@+id/curr_user_mail"
+        android:background="@android:drawable/editbox_background"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/curr_user_password"/>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/curr_user_password"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:id="@+id/confirm_btn"
+            android:layout_marginEnd="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme.RoundedCornerMaterialButton"
+            android:text="Confirm"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme.RoundedCornerMaterialButton"
+            android:text="Cancel"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+</RelativeLayout>

@@ -17,19 +17,25 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ItemsPreviewActivity extends AppCompatActivity {
@@ -51,6 +57,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     // duration is ideal for subtle animations or animations that occur
     // very frequently.
     private int shortAnimationDuration;
+    private boolean value = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,60 +158,93 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         if(qrIntent.getSerializableExtra("id")!= null){
             userID = (String) qrIntent.getSerializableExtra("id");
             Log.e("ID",userID);
-            db.collection("user").document(userID)
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        DocumentSnapshot doc = task.getResult();
-                        model = doc.toObject(ItemsModel.class);
-                        Picasso.get().load(model.getProfilePic()).into(profilePic);
-                        userName.setText(Objects.requireNonNull(model).getfName());
-                        userMail.setText(Objects.requireNonNull(model).geteMail());
-                        userPosition.setText(Objects.requireNonNull(model).getPosition());
-                        userCompany.setText(model.getCompany());
-                        userPhone.setText(String.valueOf(Objects.requireNonNull(model).getpNo()));
-                        userWno.setText(String.valueOf(Objects.requireNonNull(model).getwNo()));
-                        userAddress.setText(model.getAddress());
 
-                        cardFront.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                zoomImageFromThumb(cardFront,model.getFront());
-                            }
-                        });
-
-                        cardBack.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                zoomImageFromThumb(cardBack,model.getBack());
-                            }
-                        });
-
-                        //ASK USER FOR A CONFIRMATION TO ADD THE NEW CARD
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayUnion(userID));
-                                        break;
-
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
-                                        break;
+            db.collection("user").get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<String> idList = new ArrayList<>();
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("TAG", document.getId() + " => " + document.getData());
+                                    idList.add(task.getResult().toString());
                                 }
+                                if(idList.contains(userID)){
+                                    Log.e("TAGE","Scanned Valid ID");
+                                    value = true;
+                                }else{
+                                    Toast.makeText(ItemsPreviewActivity.this,"Invalid Code Scanned",Toast.LENGTH_LONG).show();
+                                    Log.e("TAGE","Scanned Invalid ID");
+                                    value = false;
+                                    finish();
+                                    startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
+                                }
+                            } else {
+                                Log.d("TAG", "Error getting documents: ", task.getException());
                             }
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ItemsPreviewActivity.this);
-                        builder.setMessage("Do you want to add "+userName.getText().toString()+"?").setPositiveButton("Yes", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
-                        Log.e("TAG", "Success");
-                    }else{
-                        Log.e("TAG", "Fail");
+                        }
+                    });
+            if(value){
+                db.collection("user").document(userID)
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            model = doc.toObject(ItemsModel.class);
+                            Picasso.get().load(model.getProfilePic()).into(profilePic);
+                            userName.setText(Objects.requireNonNull(model).getfName());
+                            userMail.setText(Objects.requireNonNull(model).geteMail());
+                            userPosition.setText(Objects.requireNonNull(model).getPosition());
+                            userCompany.setText(model.getCompany());
+                            userPhone.setText(String.valueOf(Objects.requireNonNull(model).getpNo()));
+                            userWno.setText(String.valueOf(Objects.requireNonNull(model).getwNo()));
+                            userAddress.setText(model.getAddress());
+
+                            cardFront.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    zoomImageFromThumb(cardFront, model.getFront());
+                                }
+                            });
+
+                            cardBack.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    zoomImageFromThumb(cardBack, model.getBack());
+                                }
+                            });
+
+                            //ASK USER FOR A CONFIRMATION TO ADD THE NEW CARD
+                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayUnion(userID));
+                                            break;
+
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
+                                            break;
+                                    }
+                                }
+                            };
+                            AlertDialog.Builder builder = new AlertDialog.Builder(ItemsPreviewActivity.this);
+                            builder.setMessage("Do you want to add " + userName.getText().toString() + "?").setPositiveButton("Yes", dialogClickListener)
+                                    .setNegativeButton("No", dialogClickListener).show();
+                            Log.e("TAG", "Success");
+                        } else {
+                            Log.e("TAG", "Fail");
+                        }
                     }
-                }
-            });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
+                    }
+                });
+            }
 
         }
 
@@ -382,6 +423,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         super.onBackPressed();
+        finish();
         startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
     }
 }

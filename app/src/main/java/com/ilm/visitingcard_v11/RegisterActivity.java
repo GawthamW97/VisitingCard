@@ -155,7 +155,6 @@ public class RegisterActivity extends AppCompatActivity{
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     progressBar.setVisibility(View.GONE);
                                     if(task.isSuccessful()){
-                                        Log.e("pic",profilePic.toString());
                                         uploadImage();
 //                                        Log.e("pic", Objects.requireNonNull(user.get(1)).toString());
                                         startActivity(new Intent(RegisterActivity.this, CreateActivity.class));

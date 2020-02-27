@@ -37,17 +37,18 @@ import java.util.Map;
 public class CreateActivity extends AppCompatActivity {
 
     TextView title;
-    EditText fName,lName,company,pNo,address,position,website,industry;
+    EditText fName,lName,company,pNo,wNo,address,position,website,industry;
     Button btnUpload;
     ImageView frontView, backView;
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     int i;
-    int FRONT_VIEW = 2;
-    int BACK_VIEW = 3;
+    int FRONT_VIEW = 20;
+    int BACK_VIEW = 30;
 
+    static ArrayList<String> urlList = new ArrayList<>();
     String firstName,lastName,workAddress,companyName,userPosition,companySite,userIndustry;
-    int phoneNumber;
+    int phoneNumber,workNumber;
     private ProgressBar progressBar;
 
     static ArrayList<Uri> ImageList = new ArrayList<Uri>();
@@ -66,6 +67,7 @@ public class CreateActivity extends AppCompatActivity {
         company =findViewById(R.id.company);
         position = findViewById(R.id.position);
         pNo = findViewById(R.id.pNo);
+        wNo = findViewById(R.id.wNo);
         address = findViewById(R.id.address);
         website = findViewById(R.id.url);
         industry = findViewById(R.id.industry);
@@ -78,35 +80,68 @@ public class CreateActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        btnUpload.setEnabled(false);
-
-        final Intent intent = CropImage.activity()
-                .getIntent(CreateActivity.this);
+//        btnUpload.setEnabled(false);
 
         frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(intent, FRONT_VIEW);
+                if(ImageList.isEmpty()) {
+                    Intent intent = CropImage.activity()
+                            .getIntent(CreateActivity.this);
+                    startActivityForResult(intent, FRONT_VIEW);
+                    Log.e("TAG1",ImageList.toString());
+                }else{
+                    Log.e("TAG1",ImageList.toString());
+                    Intent intent = CropImage.activity()
+                            .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(1));
+                    startActivityForResult(intent, FRONT_VIEW);
+                }
             }
         });
 
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(intent, BACK_VIEW);
+                if(ImageList.isEmpty()) {
+                    Intent intent = CropImage.activity()
+                            .getIntent(CreateActivity.this);
+                    startActivityForResult(intent, BACK_VIEW);
+                    Log.e("TAG21",ImageList.toString());
+                }else{
+                    Log.e("TAG22",ImageList.toString());
+                    Intent intent = CropImage.activity()
+                            .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(0));
+                    startActivityForResult(intent, BACK_VIEW);
+                }
             }
         });
 
-        if (validateFName() | validateLName() | validateCompanyName() | validatePhoneNumber() | validatePosition()) {
-            btnUpload.setEnabled(true);
-        }
+//        if (validateFName() & validateLName() & validateCompanyName() & validatePhoneNumber() & validatePosition()) {
+//            btnUpload.setEnabled(true);
+//        }else{
+//            Toast.makeText(CreateActivity.this,"The indicated filled must be filled",Toast.LENGTH_SHORT).show();
+//            btnUpload.setEnabled(true);
+//        }
 
         // UPLOAD THE DATA THAT WAS FILLED IN THE FIELDS BY THE USER
+
+        validateFName();
+        validateLName();
+        validateCompanyName();
+        validatePhoneNumber();
+        validatePosition();
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                firstName = fName.getText().toString().trim();
+                lastName = lName.getText().toString().trim();
                 companySite = website.getText().toString().trim();
                 userIndustry = industry.getText().toString().trim();
+                phoneNumber = Integer.parseInt(pNo.getText().toString().trim());
+                workNumber = Integer.parseInt(wNo.getText().toString().trim());
+                companyName = company.getText().toString().trim();
+                userPosition = position.getText().toString().trim();
+                workAddress = address.getText().toString().trim();
                 btnUpload.setEnabled(true);
                 Map<Object, Object> user = new HashMap<>();
                 user.put("fName", firstName);
@@ -118,7 +153,7 @@ public class CreateActivity extends AppCompatActivity {
                 user.put("eMail", mAuth.getCurrentUser().getEmail());
                 user.put("website", companySite);
                 user.put("industry", userIndustry);
-                user.put("connection", user_conn_list);
+                user.put("conn", user_conn_list);
 //               user.put("profilePic",getPic.getSerializableExtra("pic"));
                 uploadImage(user);
 
@@ -143,16 +178,33 @@ public class CreateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("TAG", String.valueOf(requestCode));
+        Intent intent = getIntent();
         if(resultCode == RESULT_OK) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(requestCode == FRONT_VIEW){
+            if(requestCode == FRONT_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){
                 Uri frontCard = result.getUri();
                 ImageList.add(0,frontCard);
                 Picasso.get().load(ImageList.get(0)).into(frontView);
+            }else if (requestCode == FRONT_VIEW){
+                Log.e("TAG1111","PASS");
+                Uri frontCard = result.getUri();
+//                Uri backCard = (Uri) intent.getSerializableExtra("pic");
+                ImageList.add(0,frontCard);
+                Picasso.get().load(ImageList.get(0)).into(frontView);
+                Picasso.get().load(ImageList.get(1)).into(backView);
             }
-            if(requestCode == BACK_VIEW){
+
+            if(requestCode == BACK_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){
                 Uri backCard = result.getUri();
                 ImageList.add(1,backCard);
+                Picasso.get().load(ImageList.get(1)).into(backView);
+            }else if (requestCode == BACK_VIEW){
+                Log.e("TAG1122","PASS");
+//                Uri frontCard = (Uri) intent.getSerializableExtra("pic");
+                Uri backCard = result.getUri();
+                ImageList.add(1,backCard);
+                Log.e("TAG",ImageList.toString());
+                Picasso.get().load(ImageList.get(0)).into(frontView);
                 Picasso.get().load(ImageList.get(1)).into(backView);
             }
         }
@@ -161,7 +213,7 @@ public class CreateActivity extends AppCompatActivity {
     private void uploadImage(final Map<Object, Object> user){
         StorageReference Ref = FirebaseStorage.getInstance().getReference();
         for(i = 0; i<ImageList.size();i++){
-            Uri image = ImageList.get(i);
+            final Uri image = ImageList.get(i);
             final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -169,9 +221,9 @@ public class CreateActivity extends AppCompatActivity {
                     imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
+                            Log.e("TAG",String.valueOf(i));
                             String url = String.valueOf(uri);
-                            Log.e("pics",url);
-                            StoreLink(url,user,i);
+                            StoreLink(url,user);
                         }
                     });
                 }
@@ -179,25 +231,27 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-    private void StoreLink(String url, Map<Object, Object> user, int i) {
-        if(i == 0){
-            user.put("front",url);
-        }else if(i == 1){
-            user.put("back",url);
+    private void StoreLink(String url, Map<Object, Object> user) {
+        urlList.add(url);
+        Log.e("TAG1",urlList.toString());
+        Log.e("TAG2",String.valueOf(urlList.size()));
+        if(urlList.size() == 2) {
+            user.put("front",urlList.get(0));
+            user.put("back",urlList.get(1));
+            db.collection("user").document(mAuth.getCurrentUser().getUid())
+                    .set(user, SetOptions.merge())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(CreateActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(CreateActivity.this, "Failed to upload", Toast.LENGTH_LONG).show();
+                }
+            });
         }
-        db.collection("user").document(mAuth.getCurrentUser().getUid())
-                .set(user, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(CreateActivity.this,"uploaded",Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(CreateActivity.this,"Failed to upload",Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     // VALIDATE ALL FIELD INPUTS

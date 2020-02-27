@@ -209,11 +209,13 @@
         <ImageView
             android:id="@+id/visiting_front"
             android:layout_width="175dp"
-            android:layout_height="90dp" />
+            android:layout_height="90dp"
+            android:src="@drawable/front"/>
         <ImageView
             android:id="@+id/visiting_back"
             android:layout_width="175dp"
-            android:layout_height="90dp" />
+            android:layout_height="90dp"
+            android:src="@drawable/back"/>
     </LinearLayout>
     <Button
         android:id="@+id/user_update"
