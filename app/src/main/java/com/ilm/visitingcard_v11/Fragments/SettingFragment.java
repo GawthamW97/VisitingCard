@@ -14,12 +14,13 @@ import androidx.fragment.app.Fragment;
 
 import com.ilm.visitingcard_v11.ChangeMailActivity;
 import com.ilm.visitingcard_v11.ChangePassActivity;
+import com.ilm.visitingcard_v11.DeleteAccountActivity;
 import com.ilm.visitingcard_v11.NavigationActivity;
 import com.ilm.visitingcard_v11.R;
 
 public class SettingFragment extends Fragment {
 
-    Button mail,pWord;
+    Button mail,pWord,deleteAcc;
     ImageView backBtn;
     @Nullable
     @Override
@@ -27,6 +28,7 @@ public class SettingFragment extends Fragment {
         View mView = inflater.inflate(R.layout.setting_menu, container, false);
         mail = mView.findViewById(R.id.set_mail);
         pWord = mView.findViewById(R.id.set_password);
+        deleteAcc = mView.findViewById(R.id.delete_account);
         backBtn = mView.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +49,13 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SettingFragment.this.getActivity(), ChangePassActivity.class));
+            }
+        });
+
+        deleteAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), DeleteAccountActivity.class));
             }
         });
 

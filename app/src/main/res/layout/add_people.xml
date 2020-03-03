@@ -4,19 +4,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme.NoActionBar">
-        <ImageView
-            android:layout_margin="10dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/rounded_shape"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/back_button"
-            android:id="@+id/back_btn"/>
+    <ImageView
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_shape"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/back_button"
+        android:id="@+id/back_btn"/>
     <TextView
         android:layout_marginTop="80dp"
+        android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click the button below to show the QR-Code"
+        android:text="Click the button below to Scan the QR-Code"
         android:layout_centerHorizontal="true"/>
     <ImageView
         android:id="@+id/qr_image"
@@ -25,9 +26,11 @@
         android:scaleType="centerInside"
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:contentDescription="QR-Code"/>
     <Button
-        android:layout_below="@+id/qr_image"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
@@ -40,20 +43,4 @@
         android:textColor="#ffffff"
         android:padding="10dp"
         android:textAllCaps="false"/>
-
-    <Button
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_below="@+id/btn_scan"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share Profile"
-        android:background="@drawable/rounded_shape"
-        android:textColor="#ffffff"
-        android:id="@+id/qr_button"
-        android:padding="10dp"
-        android:textAllCaps="false"/>
-
 </RelativeLayout>

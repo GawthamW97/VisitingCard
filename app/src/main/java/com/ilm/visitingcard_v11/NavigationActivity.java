@@ -58,7 +58,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         final FirebaseAuth mAuth =FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-//        mAuth.signOut();
         db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -69,8 +68,10 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = Objects.requireNonNull(doc).toObject(ItemsModel.class);
 //                    Log.e("list", Objects.requireNonNull(itemsModel).getfName().toString());
-
-                    userName.setText(Objects.requireNonNull(itemsModel).getfName());
+                    if(itemsModel.getfName() == null || itemsModel.getlName() == null){
+                        startActivity(new Intent(NavigationActivity.this,CreateActivity.class));
+                    }
+                    userName.setText(Objects.requireNonNull(itemsModel).getfName() +" "+ itemsModel.getlName());
                     userMail.setText(itemsModel.geteMail());
                     Picasso.get().load(itemsModel.getProfilePic()).into(userImage);
 
@@ -103,8 +104,11 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
     @Override
     public void onBackPressed() {
-        drawerLayout.closeDrawer(GravityCompat.START);
-        super.onBackPressed();
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -153,12 +157,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("TAG","Calls Nav"+requestCode);
-//        for (Fragment fragment : fragmentManager.getFragments()) {
-//            Log.e("TAG","Calls");
-//
-//            fragment.onActivityResult(requestCode, resultCode, data);
-//        }
+        Log.e("TAG","Calls Nav "+requestCode);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
@@ -168,6 +167,5 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             }
         }
     }
-
 }
 

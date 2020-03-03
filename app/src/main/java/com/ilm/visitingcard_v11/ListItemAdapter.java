@@ -60,7 +60,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
             ItemsModel currentItem = mList.get(position);
             i = position;
             Picasso.get().load(currentItem.getProfilePic()).into(holder.mImageView);
-            holder.mTextView1.setText(currentItem.getfName());
+            holder.mTextView1.setText(currentItem.getfName() + " "+currentItem.getlName());
             holder.mTextView2.setText(currentItem.getCompany());
 
         }

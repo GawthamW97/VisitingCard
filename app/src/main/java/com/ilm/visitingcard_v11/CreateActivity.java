@@ -3,6 +3,8 @@ package com.ilm.visitingcard_v11;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -54,12 +56,14 @@ public class CreateActivity extends AppCompatActivity {
     static ArrayList<Uri> ImageList = new ArrayList<Uri>();
     List<String> user_conn_list = new ArrayList<>();
 
-    Uri imageUri;
+    StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
+
+        progressBar = findViewById(R.id.progress);
 
         title = findViewById(R.id.title);
         fName = findViewById(R.id.fName);
@@ -75,23 +79,20 @@ public class CreateActivity extends AppCompatActivity {
         backView = findViewById(R.id.visiting_back);
         btnUpload = findViewById(R.id.upload);
 
-        progressBar = new ProgressBar(this);
-
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-//        btnUpload.setEnabled(false);
+        progressBar.setVisibility(View.INVISIBLE);
 
+        // On Image Click Open Gallery and crop selected image for Front Card View
         frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ImageList.isEmpty()) {
+                if(ImageList.isEmpty()) {               //If ImageList is empty this is the first image selected by the user
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this);
                     startActivityForResult(intent, FRONT_VIEW);
-                    Log.e("TAG1",ImageList.toString());
                 }else{
-                    Log.e("TAG1",ImageList.toString());
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(1));
                     startActivityForResult(intent, FRONT_VIEW);
@@ -99,16 +100,16 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
+        // On Image Click Open Gallery and crop selected image for Back Card View
+
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ImageList.isEmpty()) {
+                if(ImageList.isEmpty()) {               // If ImageList is empty this is the first image selected by the user
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this);
                     startActivityForResult(intent, BACK_VIEW);
-                    Log.e("TAG21",ImageList.toString());
                 }else{
-                    Log.e("TAG22",ImageList.toString());
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(0));
                     startActivityForResult(intent, BACK_VIEW);
@@ -116,60 +117,122 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
-//        if (validateFName() & validateLName() & validateCompanyName() & validatePhoneNumber() & validatePosition()) {
-//            btnUpload.setEnabled(true);
-//        }else{
-//            Toast.makeText(CreateActivity.this,"The indicated filled must be filled",Toast.LENGTH_SHORT).show();
-//            btnUpload.setEnabled(true);
-//        }
 
         // UPLOAD THE DATA THAT WAS FILLED IN THE FIELDS BY THE USER
+        fName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        validateFName();
-        validateLName();
-        validateCompanyName();
-        validatePhoneNumber();
-        validatePosition();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(validateFName()){
+                    firstName = String.valueOf(s);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        lName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(validateLName()){
+                    lastName = String.valueOf(s);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        company.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(validateCompanyName()){
+                    companyName = String.valueOf(s);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firstName = fName.getText().toString().trim();
+                btnUpload.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
                 lastName = lName.getText().toString().trim();
                 companySite = website.getText().toString().trim();
                 userIndustry = industry.getText().toString().trim();
-                phoneNumber = Integer.parseInt(pNo.getText().toString().trim());
-                workNumber = Integer.parseInt(wNo.getText().toString().trim());
+                if(pNo.getText().toString().trim().isEmpty()){
+                    phoneNumber = 0;
+                }else {
+                    phoneNumber = Integer.parseInt(pNo.getText().toString().trim());
+                }
+                if(wNo.getText().toString().trim().isEmpty()){
+                    workNumber = 0;
+                }else{
+                    workNumber = Integer.parseInt(wNo.getText().toString());
+                }
                 companyName = company.getText().toString().trim();
                 userPosition = position.getText().toString().trim();
                 workAddress = address.getText().toString().trim();
-                btnUpload.setEnabled(true);
-                Map<Object, Object> user = new HashMap<>();
-                user.put("fName", firstName);
-                user.put("lName", lastName);
-                user.put("company", companyName);
-                user.put("pNo", phoneNumber);
-                user.put("address", workAddress);
-                user.put("position", userPosition);
-                user.put("eMail", mAuth.getCurrentUser().getEmail());
-                user.put("website", companySite);
-                user.put("industry", userIndustry);
-                user.put("conn", user_conn_list);
-//               user.put("profilePic",getPic.getSerializableExtra("pic"));
-                uploadImage(user);
 
-                db.collection("user").document(mAuth.getCurrentUser().getUid())
-                        .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                if (validateFName() | validateLName() | validateCompanyName()) {
+                    // Create Map to store inserted values from the fields and use to upload it to the firebase
+                    Map<Object, Object> user = new HashMap<>();
+                    user.put("fName", firstName);
+                    user.put("lName", lastName);
+                    user.put("company", companyName);
+                    user.put("pNo", phoneNumber);
+                    user.put("address", workAddress);
+                    user.put("position", userPosition);
+                    user.put("eMail", mAuth.getCurrentUser().getEmail());
+                    user.put("website", companySite);
+                    user.put("industry", userIndustry);
+                    user.put("conn", user_conn_list);
+                    uploadImage(user);                  //Upload card Images to the firebase
+
+                    //Upload the HashMap to the Firebase FireStore
+                    db.collection("user").document(mAuth.getCurrentUser().getUid())
+                            .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(CreateActivity.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                            btnUpload.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE);
+                            finish();
                             startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(CreateActivity.this, "Failed to Update", Toast.LENGTH_SHORT).show();
+                            btnUpload.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     });
+                }else{
+                    btnUpload.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }
@@ -177,48 +240,47 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("TAG", String.valueOf(requestCode));
         Intent intent = getIntent();
         if(resultCode == RESULT_OK) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(requestCode == FRONT_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data); //Get cropped image
+            if(requestCode == FRONT_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){ //If front view of the card is selected by the user aa the first image
+                Uri frontCard = result.getUri();
+                ImageList.add(0,frontCard);                         //Add id to the ImageList
+                Picasso.get().load(ImageList.get(0)).into(frontView);     //Set the ImageView with cropped image in the layout
+            }else if (requestCode == FRONT_VIEW){                //If the user selects the Front Card as the second image
                 Uri frontCard = result.getUri();
                 ImageList.add(0,frontCard);
-                Picasso.get().load(ImageList.get(0)).into(frontView);
-            }else if (requestCode == FRONT_VIEW){
-                Log.e("TAG1111","PASS");
-                Uri frontCard = result.getUri();
-//                Uri backCard = (Uri) intent.getSerializableExtra("pic");
-                ImageList.add(0,frontCard);
-                Picasso.get().load(ImageList.get(0)).into(frontView);
-                Picasso.get().load(ImageList.get(1)).into(backView);
+                Picasso.get().load(ImageList.get(0)).into(frontView);   //Set both image views with the images
+                Picasso.get().load(ImageList.get(1)).into(backView);    // From ImageList ArrayList
             }
 
-            if(requestCode == BACK_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){
+            if(requestCode == BACK_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){  //If the user selects the Front Card as the first image
+                Uri backCard = result.getUri();
+                ImageList.add(1,backCard);                          //Add id to the ImageList
+                Picasso.get().load(ImageList.get(1)).into(backView);       //Set the ImageView with cropped image in the layout
+            }else if (requestCode == BACK_VIEW){        //If the user selects the Front Card as the second image
                 Uri backCard = result.getUri();
                 ImageList.add(1,backCard);
-                Picasso.get().load(ImageList.get(1)).into(backView);
-            }else if (requestCode == BACK_VIEW){
-                Log.e("TAG1122","PASS");
-//                Uri frontCard = (Uri) intent.getSerializableExtra("pic");
-                Uri backCard = result.getUri();
-                ImageList.add(1,backCard);
-                Log.e("TAG",ImageList.toString());
-                Picasso.get().load(ImageList.get(0)).into(frontView);
-                Picasso.get().load(ImageList.get(1)).into(backView);
+                Picasso.get().load(ImageList.get(0)).into(frontView);   //Set both image views with the images
+                Picasso.get().load(ImageList.get(1)).into(backView);    // From ImageList ArrayList
             }
         }
     }
 
     private void uploadImage(final Map<Object, Object> user){
-        StorageReference Ref = FirebaseStorage.getInstance().getReference();
+        StorageReference imageName;
         for(i = 0; i<ImageList.size();i++){
             final Uri image = ImageList.get(i);
-            final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
+            if(i == 0) {
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
+            }else{
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
+            }
+            final StorageReference finalImageName = imageName;
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             Log.e("TAG",String.valueOf(i));
@@ -233,8 +295,6 @@ public class CreateActivity extends AppCompatActivity {
 
     private void StoreLink(String url, Map<Object, Object> user) {
         urlList.add(url);
-        Log.e("TAG1",urlList.toString());
-        Log.e("TAG2",String.valueOf(urlList.size()));
         if(urlList.size() == 2) {
             user.put("front",urlList.get(0));
             user.put("back",urlList.get(1));

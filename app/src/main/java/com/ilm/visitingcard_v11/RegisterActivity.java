@@ -82,10 +82,6 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
-//        eMail = userMail.getText().toString().trim();
-//        pwd = password.getText().toString().trim();
-//        pwdRe = re_passsword.getText().toString().trim();
-
         userMail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -143,11 +139,12 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
-
             regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //REGISTER USER TO THE FIREBASE
+                regBtn.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
                 if(pwd.equals(pwdRe)){
                     mAuth.createUserWithEmailAndPassword(eMail, pwd)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -157,9 +154,13 @@ public class RegisterActivity extends AppCompatActivity{
                                     if(task.isSuccessful()){
                                         uploadImage();
 //                                        Log.e("pic", Objects.requireNonNull(user.get(1)).toString());
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        regBtn.setVisibility(View.VISIBLE);
                                         startActivity(new Intent(RegisterActivity.this, CreateActivity.class));
                                         Toast.makeText(RegisterActivity.this,"Registration Complete",Toast.LENGTH_LONG).show();
                                     }else{
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        regBtn.setVisibility(View.VISIBLE);
                                         Toast.makeText(RegisterActivity.this,"Authentication Failed",Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -219,7 +220,7 @@ public class RegisterActivity extends AppCompatActivity{
         StorageReference Ref = FirebaseStorage.getInstance().getReference();
         for(int i = 0; i < ImageList.size(); i++){
             Uri image = ImageList.get(i);
-            final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
+            final StorageReference imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/ProfilePicture");
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

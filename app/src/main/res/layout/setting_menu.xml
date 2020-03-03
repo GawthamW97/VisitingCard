@@ -59,6 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Delete Account"
+        android:id="@+id/delete_account"
         android:textAllCaps="false"
         android:background="@drawable/fui_idp_button_background_google"
         android:textSize="20sp"

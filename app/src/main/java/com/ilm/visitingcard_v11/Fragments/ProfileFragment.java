@@ -35,7 +35,6 @@ import com.ilm.visitingcard_v11.NavigationActivity;
 import com.ilm.visitingcard_v11.R;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.yalantis.ucrop.UCrop;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,9 +43,9 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class ProfileFragment extends Fragment implements DialogFragment.DialogList {
+public class ProfileFragment extends Fragment{
 
-    private EditText userName,userPosition,userMail,userAddress,userPhone,userCompany,userSite,workPhone;
+    private EditText fName,lName,userPosition,userMail,userAddress,userPhone,userCompany,userSite,workPhone;
     private ImageView cardFront,cardBack,profilePic;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -56,8 +55,10 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
     private final int BACK_IMG_GALLERY = 3;
     Map<Object,Object> user;
 
-    private ArrayList<Uri> ImageList = new ArrayList<>();
+    private static ArrayList<Uri> ImageList = new ArrayList<>();
     private View mView;
+    static ArrayList<String> urlList = new ArrayList<>();
+    StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
     @Nullable
     @Override
@@ -66,7 +67,8 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
 
         mView = inflater.inflate(R.layout.activity_profile, container, false);
         profilePic = mView.findViewById(R.id.user_image);
-        userName = mView.findViewById(R.id.user_profile_name);
+        fName = mView.findViewById(R.id.user_fName);
+        lName = mView.findViewById(R.id.user_lName);
         userMail = mView.findViewById(R.id.user_profile_mail);
         userPhone = mView.findViewById(R.id.user_profile_phone);
         userPosition = mView.findViewById(R.id.user_profile_position);
@@ -99,16 +101,24 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
-                    Picasso.get().load(Objects.requireNonNull(itemsModel).getProfilePic()).into(profilePic);
-                    Picasso.get().load(itemsModel.getFront()).into(cardFront);
-                    Picasso.get().load(itemsModel.getBack()).into(cardBack);
-                    userName.setText(Objects.requireNonNull(itemsModel).getfName());
+                    if(itemsModel.getProfilePic() !=null) {
+                        Picasso.get().load(Objects.requireNonNull(itemsModel).getProfilePic()).into(profilePic);
+                    }
+                    if(itemsModel.getFront() != null) {
+                        Picasso.get().load(itemsModel.getFront()).into(cardFront);
+                    }
+                    if(itemsModel.getBack() != null) {
+                        Picasso.get().load(itemsModel.getBack()).into(cardBack);
+                    }
+                    fName.setText(Objects.requireNonNull(itemsModel).getfName());
+                    lName.setText(Objects.requireNonNull(itemsModel).getlName());
                     userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
                     userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
                     userCompany.setText(itemsModel.getCompany());
                     userPhone.setText(String.valueOf(itemsModel.getpNo()));
                     workPhone.setText(String.valueOf(itemsModel.getwNo()));
                     userAddress.setText(itemsModel.getAddress());
+                    userSite.setText(itemsModel.getWebsite());
                     Log.e("Success", "Success");
                 }
             }
@@ -117,36 +127,58 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = CropImage.activity().getIntent(getContext());
-                Log.e("TAG","1");
-                startActivityForResult(intent,CODE_IMAGE_GALLERY);
+                if(ImageList.isEmpty()) {
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext());
+                    startActivityForResult(intent,CODE_IMAGE_GALLERY );
+                    Log.e("TAG1",ImageList.toString());
+                }else{
+                    Log.e("TAG1",ImageList.toString());
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
+                    startActivityForResult(intent, CODE_IMAGE_GALLERY);
+                }
             }
         });
         cardFront.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = CropImage.activity().getIntent(getContext());
-                Log.e("TAG","1");
-                startActivityForResult(intent,1);
+                if(ImageList.isEmpty()) {
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext());
+                    startActivityForResult(intent,FRONT_IMG_GALLERY );
+                    Log.e("TAG1",ImageList.toString());
+                }else{
+                    Log.e("TAG1",ImageList.toString());
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
+                    startActivityForResult(intent, FRONT_IMG_GALLERY);
+                }
             }
         });
         cardBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("TAG","BACK");
-                startActivityForResult(new Intent()
-               .setAction(Intent.ACTION_GET_CONTENT)
-               .setType("image/*"),2);
-                Log.e("TAG","IMG");
+                if(ImageList.isEmpty()) {
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext());
+                    startActivityForResult(intent,BACK_IMG_GALLERY );
+                    Log.e("TAG1",ImageList.toString());
+                }else{
+                    Log.e("TAG1",ImageList.toString());
+                    Intent intent = CropImage.activity()
+                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
+                    startActivityForResult(intent, BACK_IMG_GALLERY);
+                }
             }
         });
 
         // UPDATE THE CURRENT USER DETAIL ON THE CLICK OF THE BUTTON
-
         updatebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstName = userName.getText().toString();
+                String firstName = fName.getText().toString();
+                String lastName = lName.getText().toString();
                 String workAddress = userAddress.getText().toString();
                 int phoneNumber = Integer.parseInt(String.valueOf(userPhone.getText()).trim());
                 String companyName = userCompany.getText().toString();
@@ -156,6 +188,7 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
 
                 user = new HashMap<>();
                 user.put("fName",firstName);
+                user.put("lName",lastName);
                 user.put("company",companyName);
                 user.put("pNo",phoneNumber);
                 user.put("wNo",workNumber);
@@ -170,7 +203,7 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-                                db.collection("user").document(mAuth.getUid())
+                                db.collection("user").document(Objects.requireNonNull(mAuth.getUid()))
                                         .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -190,7 +223,7 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
                         }
                     }
                 };
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
                 builder.setMessage("Are you sure that you want to update your profile?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
             }
@@ -200,17 +233,25 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
 
     //GET IMAGE URL
     private void uploadImage(final Map<Object, Object> user){
-        StorageReference Ref = FirebaseStorage.getInstance().getReference();
-
+        StorageReference imageName = null;
         for(i = 0; i<ImageList.size();i++){
-            Uri image = ImageList.get(i);
-            final StorageReference imageName = Ref.child("Image"+ image.getLastPathSegment());
+            final Uri image = ImageList.get(i);
+            if(i == 0){
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/ProfilePic");
+            }
+            if(i == 1) {
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
+            }else if(i == 2){
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
+            }
+            final StorageReference finalImageName = imageName;
             imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
+                            Log.e("TAG",String.valueOf(i));
                             String url = String.valueOf(uri);
                             StoreLink(url,user,i);
                         }
@@ -222,91 +263,98 @@ public class ProfileFragment extends Fragment implements DialogFragment.DialogLi
 
     //UPLOAD IMAGE TO DATABASE
     private void StoreLink(String url,Map<Object,Object> user,int i) {
-        if(i == 1){
-            user.put("front",url);
-        }else if( i == 2){
-            user.put("back",url);
-        }else if( i == 0){
-            user.put("profilePic", url);
+        urlList.add(url);
+        if(urlList.size() == 2) {
+            user.put("front",urlList.get(0));
+            user.put("back",urlList.get(1));
+            db.collection("user").document(mAuth.getCurrentUser().getUid())
+                    .set(user, SetOptions.merge())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getContext(), "Failed to upload", Toast.LENGTH_LONG).show();
+                }
+            });
         }
-
-        db.collection("user").document(mAuth.getUid())
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(ProfileFragment.this.getActivity(),"uploaded",Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ProfileFragment.this.getActivity(),"Failed to upload",Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
-    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
-        Log.e("TAG","IMG");
-//        if(requestCode == 1 && resultCode == RESULT_OK){
-//            Uri pic = data.getData();
-//            cardFront.setImageURI(pic);
-//        }
-        if(requestCode == 1 && resultCode == RESULT_OK){
-            Uri pic = data.getData();
-            if(pic != null){
-                startCrop(pic);
-            }
-        }else if(requestCode == 2 && resultCode == RESULT_OK){
-            Uri pic = data.getData();
-            if(pic != null){
-                startCrop(pic);
-            }
-        }else if(requestCode == UCrop.REQUEST_CROP && resultCode ==RESULT_OK){
-            Uri imageUriCropped =UCrop.getOutput(data);
-
-            if(imageUriCropped != null){
-                cardBack.setImageURI(imageUriCropped);
+        if(resultCode == RESULT_OK){
+            if(requestCode == CODE_IMAGE_GALLERY && ImageList.isEmpty()){
+                Uri pic = data.getData();
+                ImageList.add(0,pic);
+                Picasso.get().load(pic).into(profilePic);
+            }else{
+                Uri pic = data.getData();
+                ImageList.add(0,pic);
+                if(ImageList.get(1)== null && ImageList.get(2) != null){
+                    Picasso.get().load(pic).into(profilePic);
+                    Picasso.get().load(ImageList.get(2)).into(cardBack);
+                }else if(ImageList.get(1)!= null && ImageList.get(2) == null){
+                    Picasso.get().load(pic).into(profilePic);
+                    Picasso.get().load(ImageList.get(1)).into(cardBack);
+                }else {
+                    Picasso.get().load(pic).into(profilePic);
+                    Picasso.get().load(ImageList.get(1)).into(cardBack);
+                    Picasso.get().load(ImageList.get(2)).into(cardBack);
+                }
             }
         }
-//        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            if(resultCode == RESULT_OK){
-//                Uri resultUri = result.getUri();
-//                Log.e("resultUri ->", String.valueOf(resultUri));
-//                cardFront.setImageURI(resultUri);
-//                ImageList.add(resultUri);
-//            }else if(resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
-//                Exception error = result.getError();
-//                Log.e("Error ->",String.valueOf(error));
-//            }
-//        }
-    }
+        Intent intent = getActivity().getIntent();
+        if(resultCode == RESULT_OK) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (requestCode == FRONT_IMG_GALLERY && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()) {
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+            } else if (requestCode == FRONT_IMG_GALLERY && ImageList.get(0) == null && ImageList.get(2) != null) {
+                Log.e("TAG1111", "PASS");
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(2)).into(cardBack);
+            }else if(requestCode == FRONT_IMG_GALLERY && ImageList.get(0) != null && ImageList.get(2) == null){
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(0)).into(profilePic);
+            }else{
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(0)).into(profilePic);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(2)).into(profilePic);
+            }
 
-    private void startCrop(@NonNull Uri uri){
-        Uri dFileName = Uri.parse("Front.jpg");
-        UCrop.of(uri,dFileName)
-                .withAspectRatio(1,1)
-                .start(getContext(),this,UCrop.REQUEST_CROP);
-    }
-
-    private UCrop.Options getCropOptions() {
-        UCrop.Options options = new UCrop.Options();
-
-        options.setCompressionQuality(70);
-
-        options.setHideBottomControls(false);
-        options.setFreeStyleCropEnabled(true);
-
-        options.setStatusBarColor(getResources().getColor(R.color.bootstrap_brand_primary));
-        options.setToolbarColor(getResources().getColor(R.color.bootstrap_brand_danger));
-
-        return options;
-    }
-
-    @Override
-    public void applyText(String password) {
-
+            if (requestCode == BACK_IMG_GALLERY && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()) {
+                Uri backCard = result.getUri();
+                ImageList.add(2, backCard);
+                Picasso.get().load(ImageList.get(1)).into(cardBack);
+            } else if (requestCode == BACK_IMG_GALLERY && ImageList.get(0) == null && ImageList.get(1) != null) {
+                Log.e("TAG1122", "PASS");
+                Uri backCard = result.getUri();
+                ImageList.add(2, backCard);
+                Log.e("TAG", ImageList.toString());
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(2)).into(cardBack);
+            }else if(requestCode == BACK_IMG_GALLERY && ImageList.get(0) != null && ImageList.get(1) == null){
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(0)).into(profilePic);
+            }else{
+                Uri frontCard = result.getUri();
+                ImageList.add(1, frontCard);
+                Picasso.get().load(ImageList.get(0)).into(profilePic);
+                Picasso.get().load(ImageList.get(1)).into(cardFront);
+                Picasso.get().load(ImageList.get(2)).into(profilePic);
+            }
+        }
     }
 }

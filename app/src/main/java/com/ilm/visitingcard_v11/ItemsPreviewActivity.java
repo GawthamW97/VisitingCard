@@ -16,6 +16,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +42,8 @@ import java.util.Objects;
 
 public class ItemsPreviewActivity extends AppCompatActivity {
 
-    ImageView profilePic;
-    TextView userName,userPosition,userMail,userAddress,userPhone,userCompany,userWno,userCompWeb;
+    ImageView profilePic,front,back;
+    TextView fName,lName,userPosition,userMail,userAddress,userPhone,userCompany,userWno,userCompWeb;
     Button delete_btn;
     ItemsModel itemsModel;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -57,7 +59,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     // duration is ideal for subtle animations or animations that occur
     // very frequently.
     private int shortAnimationDuration;
-    private boolean value = false;
 
 
     @Override
@@ -65,6 +66,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items_preview);
 
+        RelativeLayout profile_view = findViewById(R.id.profile_container);
+        ProgressBar progressBar = findViewById(R.id.progress_circular);
         // Hook up clicks on the thumbnail views.
         final View cardFront = findViewById(R.id.front);
 //        cardFront.getBackground().setAlpha(200);
@@ -74,8 +77,14 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
 
+        profile_view.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
         profilePic = findViewById(R.id.user_image);
-        userName = findViewById(R.id.conn_name);
+        front = findViewById(R.id.front);
+        back = findViewById(R.id.back);
+        fName = findViewById(R.id.first_name);
+        lName = findViewById(R.id.last_name);
         userMail = findViewById(R.id.conn_mail);
         userPhone = findViewById(R.id.conn_phone);
         userPosition = findViewById(R.id.conn_position);
@@ -89,7 +98,10 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         if(intent.getSerializableExtra("items") != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
             Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
-            userName.setText(Objects.requireNonNull(itemsModel).getfName()+" "+Objects.requireNonNull(itemsModel).getlName());
+            Picasso.get().load(itemsModel.getFront()).into(front);
+            Picasso.get().load(itemsModel.getBack()).into(back);
+            fName.setText(Objects.requireNonNull(itemsModel).getfName());
+            lName.setText(Objects.requireNonNull(itemsModel).getlName());
             userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
             userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
             userCompany.setText(Objects.requireNonNull(itemsModel).getCompany());
@@ -152,10 +164,15 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 }
             });
 
+            progressBar.setVisibility(View.INVISIBLE);
+            profile_view.setVisibility(View.VISIBLE);
+
         }
         //TODO: Get user profile after scanning
         Intent qrIntent = getIntent();
         if(qrIntent.getSerializableExtra("id")!= null){
+            profile_view.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
             userID = (String) qrIntent.getSerializableExtra("id");
             Log.e("ID",userID);
 
@@ -167,15 +184,14 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d("TAG", document.getId() + " => " + document.getData());
-                                    idList.add(task.getResult().toString());
+                                    idList.add(document.getId());
                                 }
+                                Log.e("TAGE",idList.toString());
                                 if(idList.contains(userID)){
                                     Log.e("TAGE","Scanned Valid ID");
-                                    value = true;
                                 }else{
                                     Toast.makeText(ItemsPreviewActivity.this,"Invalid Code Scanned",Toast.LENGTH_LONG).show();
                                     Log.e("TAGE","Scanned Invalid ID");
-                                    value = false;
                                     finish();
                                     startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
                                 }
@@ -184,7 +200,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                             }
                         }
                     });
-            if(value){
                 db.collection("user").document(userID)
                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -193,7 +208,10 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                             DocumentSnapshot doc = task.getResult();
                             model = doc.toObject(ItemsModel.class);
                             Picasso.get().load(model.getProfilePic()).into(profilePic);
-                            userName.setText(Objects.requireNonNull(model).getfName());
+                            Picasso.get().load(itemsModel.getFront()).into(front);
+                            Picasso.get().load(itemsModel.getBack()).into(back);
+                            fName.setText(Objects.requireNonNull(itemsModel).getfName());
+                            lName.setText(Objects.requireNonNull(itemsModel).getlName());
                             userMail.setText(Objects.requireNonNull(model).geteMail());
                             userPosition.setText(Objects.requireNonNull(model).getPosition());
                             userCompany.setText(model.getCompany());
@@ -231,7 +249,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                                 }
                             };
                             AlertDialog.Builder builder = new AlertDialog.Builder(ItemsPreviewActivity.this);
-                            builder.setMessage("Do you want to add " + userName.getText().toString() + "?").setPositiveButton("Yes", dialogClickListener)
+                            builder.setMessage("Do you want to add " + fName.getText().toString() + lName.getText().toString() + "?").setPositiveButton("Yes", dialogClickListener)
                                     .setNegativeButton("No", dialogClickListener).show();
                             Log.e("TAG", "Success");
                         } else {
@@ -244,8 +262,9 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                         startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
                     }
                 });
-            }
 
+                progressBar.setVisibility(View.INVISIBLE);
+                profile_view.setVisibility(View.VISIBLE);
         }
 
         //TODO:On Click Activity for Phone Numbers and Email Address
@@ -280,7 +299,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     }
 
     //TODO:ENLARGE THE SELECTED CARD FOR THE USER TO VIEW
-
     private void zoomImageFromThumb(final View thumbView, String imageResId) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
@@ -418,6 +436,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 currentAnimator = set;
             }
         });
+
     }
 
     @Override

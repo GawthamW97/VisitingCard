@@ -43,18 +43,25 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="User Password"
+        android:inputType="textPassword"
         android:layout_below="@+id/curr_user_mail"
         android:background="@android:drawable/editbox_background"
         android:layout_centerHorizontal="true"
         android:id="@+id/curr_user_password"/>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/curr_user_password"
         android:layout_centerHorizontal="true">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/circular_bar"
+            android:id="@+id/progress"
+            android:layout_marginLeft="20dp"/>
         <Button
+            android:layout_alignParentStart="true"
             android:id="@+id/confirm_btn"
             android:layout_marginEnd="20dp"
             android:layout_width="wrap_content"
@@ -69,6 +76,7 @@
             android:layout_height="wrap_content"
             style="@style/AppTheme.RoundedCornerMaterialButton"
             android:text="Cancel"
+            android:layout_alignParentEnd="true"
             android:textAllCaps="false"/>
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

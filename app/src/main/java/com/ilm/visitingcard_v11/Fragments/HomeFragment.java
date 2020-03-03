@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,15 +43,17 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private ArrayList<ItemsModel> itemList;
     private List<String> conn_list = null;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.activity_main,container,false);
-
+        progressBar = mView.findViewById(R.id.progress_circular);
+        progressBar.setVisibility(View.VISIBLE);
         showData(mView);
-
+        progressBar.setVisibility(View.INVISIBLE);
         final SwipeRefreshLayout pullToRefresh = mView.findViewById(R.id.pullToRefresh);
         // Refresh the view on pull down
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -60,7 +63,6 @@ public class HomeFragment extends Fragment {
                 pullToRefresh.setRefreshing(false);
             }
         });
-
      return mView;
     }
 
@@ -72,6 +74,7 @@ public class HomeFragment extends Fragment {
         itemListView.setHasFixedSize(true);
         itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
         itemListView.setLayoutManager(layoutManager);
+        itemListView.setVisibility(View.INVISIBLE);
 
         //Get a list of connections that the current user has.
 
@@ -118,8 +121,9 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Search the list from the characters the user inserts in the text field.
+        itemListView.setVisibility(View.VISIBLE);
 
+        // Search the list from the characters the user inserts in the text field.
         searchList.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -155,15 +159,6 @@ public class HomeFragment extends Fragment {
         listAdapter.filterList(filterdNames);
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        FragmentManager fragmentManager = this.
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.home_container, new HomeFragment())
-//                .commit();
-    }
 }
 
 

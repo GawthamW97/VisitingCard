@@ -5,170 +5,187 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreateActivity">
-
-    <TextView
-        android:layout_marginTop="20dp"
-        android:id="@+id/title"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Profile"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"/>
+        android:layout_height="match_parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        app:srcCompat="@drawable/ic_person_black_24dp"
-        android:layout_below="@id/title"
-        android:id="@+id/profile_pic"
-        android:layout_centerHorizontal="true"/>
-    <LinearLayout
-        android:layout_below="@+id/profile_pic"
-        android:id="@+id/layout01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/fName"
-            android:layout_width="155dp"
-            android:textSize="15sp"
-            android:layout_marginTop="10dp"
-            android:hint="First Name"
-            android:background="@android:drawable/editbox_background"
-            android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/lName"
-            android:layout_marginStart="15dp"
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:layout_marginTop="10dp"
-            android:background="@android:drawable/editbox_background"
-            android:hint="Last Name"/>
-    </LinearLayout>
+                <TextView
+                    android:layout_margin="30dp"
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create Profile"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"/>
+                <LinearLayout
+                    android:layout_below="@+id/title"
+                    android:id="@+id/layout01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
 
-    <EditText
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/layout01"
-        android:layout_width="325dp"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:id="@+id/address"
-        android:hint="Work Address"
-        android:textSize="15sp"
-        android:background="@android:drawable/editbox_background" />
+                    <EditText
+                        android:id="@+id/fName"
+                        android:layout_width="155dp"
+                        android:textSize="18sp"
+                        android:layout_marginTop="10dp"
+                        android:hint="First Name"
+                        android:background="@android:drawable/editbox_background"
+                        android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/company"
-        android:layout_width="325dp"
-        android:layout_height="wrap_content"
-        android:hint="Company"
-        android:textSize="15sp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/address"
-        android:layout_alignStart="@+id/address"
-        android:background="@android:drawable/editbox_background" />
+                    <EditText
+                        android:id="@+id/lName"
+                        android:layout_marginStart="15dp"
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:layout_marginTop="10dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:hint="Last Name"/>
+                </LinearLayout>
 
-    <EditText
-        android:layout_width="325dp"
-        android:layout_height="wrap_content"
-        android:hint="Position"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/company"
-        android:layout_alignStart="@+id/company"
-        android:id="@+id/position"
-        android:textSize="15sp"
-        android:background="@android:drawable/editbox_background" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/position"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/layout03"
-        android:orientation="horizontal"
-        android:gravity="center">
+                <EditText
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/layout01"
+                    android:layout_width="325dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/address"
+                    android:hint="Work Address"
+                    android:textSize="18sp"
+                    android:background="@android:drawable/editbox_background" />
 
-        <EditText
-            android:layout_marginTop="5dp"
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:hint="Phone Number"
-            android:id="@+id/pNo"
-            android:background="@android:drawable/editbox_background"
-            android:textSize="15sp"/>
+                <EditText
+                    android:id="@+id/company"
+                    android:layout_width="325dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Company"
+                    android:textSize="18sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/address"
+                    android:background="@android:drawable/editbox_background" />
 
-        <EditText
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:hint="Work Number"
-            android:id="@+id/wNo"
-            android:background="@android:drawable/editbox_background"
-            android:textSize="15sp"/>
-    </LinearLayout>
+                <EditText
+                    android:layout_width="325dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Position"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/company"
+                    android:id="@+id/position"
+                    android:textSize="18sp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:drawable/editbox_background" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/position"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/layout03"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-    <LinearLayout
-        android:layout_alignStart="@+id/layout02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/layout04"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/layout03">
-        <EditText
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="Website link"
-            android:background="@android:drawable/editbox_background"
-            android:textSize="15sp"
-            android:id="@+id/url"
-            android:layout_marginRight="15dp"/>
-        <EditText
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="Indusrty"
-            android:background="@android:drawable/editbox_background"
-            android:textSize="15sp"
-            android:id="@+id/industry"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/layout05"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_below="@+id/layout04"
-        android:orientation="horizontal">
+                    <EditText
+                        android:layout_marginTop="5dp"
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Phone Number"
+                        android:inputType="number"
+                        android:id="@+id/pNo"
+                        android:background="@android:drawable/editbox_background"
+                        android:textSize="18sp"/>
 
-        <ImageView
-            android:id="@+id/visiting_front"
-            android:layout_width="175dp"
-            android:layout_height="90dp"
-            app:srcCompat="@drawable/ic_person_black_24dp"/>
+                    <EditText
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Work Number"
+                        android:inputType="number"
+                        android:id="@+id/wNo"
+                        android:background="@android:drawable/editbox_background"
+                        android:textSize="18sp"/>
+                </LinearLayout>
 
-        <ImageView
-            android:id="@+id/visiting_back"
-            android:layout_width="175dp"
-            android:layout_height="90dp"
-            app:srcCompat="@drawable/ic_person_black_24dp"/>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_alignStart="@+id/layout02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/layout04"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/layout03">
+                    <EditText
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Website link"
+                        android:background="@android:drawable/editbox_background"
+                        android:textSize="18sp"
+                        android:id="@+id/url"
+                        android:layout_marginRight="15dp"/>
+                    <EditText
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Indusrty"
+                        android:background="@android:drawable/editbox_background"
+                        android:textSize="18sp"
+                        android:id="@+id/industry"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/layout05"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_below="@+id/layout04"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/visiting_front"
+                        android:layout_width="175dp"
+                        android:layout_height="90dp"
+                        app:srcCompat="@drawable/ic_person_black_24dp"/>
+
+                    <ImageView
+                        android:id="@+id/visiting_back"
+                        android:layout_width="175dp"
+                        android:layout_height="90dp"
+                        app:srcCompat="@drawable/ic_person_black_24dp"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
     <Button
-        android:layout_marginBottom="20dp"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:padding="15dp"
+        android:padding="18sp"
         android:id="@+id/upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:text="Upload"
+        android:layout_marginBottom="15dp"
         android:textAllCaps="false"
         style="@style/AppTheme.RoundedCornerMaterialButton"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:indeterminateDrawable="@drawable/circular_bar"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
