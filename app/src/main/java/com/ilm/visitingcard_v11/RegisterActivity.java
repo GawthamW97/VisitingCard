@@ -82,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
-        userMail.addTextChangedListener(new TextWatcher() {
+        userMail.addTextChangedListener(new TextWatcher() {                 //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -101,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
-        password.addTextChangedListener(new TextWatcher() {
+        password.addTextChangedListener(new TextWatcher() {              //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -120,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
-        re_passsword.addTextChangedListener(new TextWatcher() {
+        re_passsword.addTextChangedListener(new TextWatcher() {              //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,13 +139,14 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
 
+        //on button click upload the data to
             regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //REGISTER USER TO THE FIREBASE
                 regBtn.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
-                if(pwd.equals(pwdRe)){
+                if(validateMail()|validatePassword()|validateRePassword()){     // Validate input-fields
                     mAuth.createUserWithEmailAndPassword(eMail, pwd)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -153,7 +154,6 @@ public class RegisterActivity extends AppCompatActivity{
                                     progressBar.setVisibility(View.GONE);
                                     if(task.isSuccessful()){
                                         uploadImage();
-//                                        Log.e("pic", Objects.requireNonNull(user.get(1)).toString());
                                         progressBar.setVisibility(View.INVISIBLE);
                                         regBtn.setVisibility(View.VISIBLE);
                                         startActivity(new Intent(RegisterActivity.this, CreateActivity.class));
@@ -165,6 +165,10 @@ public class RegisterActivity extends AppCompatActivity{
                                     }
                                 }
                             });
+                }else{
+                    progressBar.setVisibility(View.INVISIBLE);
+                    regBtn.setVisibility(View.VISIBLE);
+                    Toast.makeText(RegisterActivity.this,"Fill the Fields with proper values",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -238,7 +242,7 @@ public class RegisterActivity extends AppCompatActivity{
     }
 
     private void StoreLink(String url, Map<String, Object> user) {
-        user.put("profilePic",url);
+        user.put("pPic",url);
         db.collection("user").document(mAuth.getCurrentUser().getUid())
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

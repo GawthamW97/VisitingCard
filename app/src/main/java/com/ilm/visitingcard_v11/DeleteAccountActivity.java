@@ -26,10 +26,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 public class DeleteAccountActivity extends AppCompatActivity {
 
     EditText mail,pwd;
@@ -38,8 +34,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
-    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-    Map<Object,String> imageStored = new HashMap<>();
     ProgressBar progressBar;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
@@ -58,48 +52,36 @@ public class DeleteAccountActivity extends AppCompatActivity {
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {                // Delete user from the document list of firebase firestore
                 db.collection("user").document(mAuth.getCurrentUser().getUid())
                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful()){
-                            try {
-                                DocumentSnapshot doc = task.getResult();
-                                ItemsModel list = Objects.requireNonNull(doc).toObject(ItemsModel.class);
-                                Log.e("TAG", Objects.requireNonNull(list).getFront());
-                                if (list.getFront() != null) {
-                                    imageStored.put(1,list.getFront());
-                                }
-                                if (list.getBack() != null) {
-                                    imageStored.put(2,list.getBack());
-                                }
-                                if (list.getProfilePic() != null) {
-                                    imageStored.put(0,list.getProfilePic());
-                                }
-                            }catch (NullPointerException e){
-                                e.printStackTrace();
-                            }
+                            Log.e("TAG","User Deleted from Firestore");
                         }
                     }
                 });
                 confirm.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
+
                 if(mAuth.getCurrentUser().getEmail().equals(mail.getText().toString().trim())){
                     AuthCredential credential = EmailAuthProvider
-                            .getCredential(mail.getText().toString().trim(),pwd.getText().toString());
-                    mAuth.getCurrentUser().reauthenticate(credential)
+                            .getCredential(mail.getText().toString().trim(),pwd.getText().toString());  // Set credential with the data inserted in the fields
+                    mAuth.getCurrentUser().reauthenticate(credential)                                        //Re-authenticate users with the received credentials
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                        public void onComplete(@NonNull Task<Void> task) {                              //If task is successful remove images from firebase storage
                             Toast.makeText(DeleteAccountActivity.this,"Your account is Deleted",Toast.LENGTH_LONG).show();
-                            StorageReference profile_pic = storageRef.child((mAuth.getCurrentUser().getUid() + "/ProfilePicture"));
+
+                            StorageReference profile_pic = storageRef.child((mAuth.getCurrentUser().getUid() + "/pPic"));
                             profile_pic.delete();
                             StorageReference card_front = storageRef.child((mAuth.getCurrentUser().getUid() + "/FrontView"));
                             card_front.delete();
                             StorageReference card_back = storageRef.child((mAuth.getCurrentUser().getUid() + "/BackView"));
                             card_back.delete();
-                            db.collection("user").document(mAuth.getCurrentUser().getUid())
+
+                            db.collection("user").document(mAuth.getCurrentUser().getUid())         //Delete user from firebase Authentication
                                     .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -108,7 +90,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             Log.e("TAG","Account Deleted");
                                             finish();
-                                            startActivity(new Intent(DeleteAccountActivity.this,LoginActivity.class));
+                                            startActivity(new Intent(DeleteAccountActivity.this,LoginActivity.class));      //On deletion re-direct to Login
                                         }
                                     });
                                 }
@@ -139,7 +121,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {      //Back button
             @Override
             public void onClick(View v) {
                 fragmentManager = getSupportFragmentManager();

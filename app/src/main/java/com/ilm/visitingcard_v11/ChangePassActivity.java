@@ -18,6 +18,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class ChangePassActivity extends AppCompatActivity{
 
     EditText newPwd,rePwd,currPwd;
@@ -37,6 +39,9 @@ public class ChangePassActivity extends AppCompatActivity{
             public void onRefresh() {
                 finish();
                 startActivity(getIntent());
+                newPwd.setText(null);
+                currPwd.setText(null);
+                rePwd.setText(null);
                 showData();
                 pullToRefresh.setRefreshing(false);
             }
@@ -54,23 +59,23 @@ public class ChangePassActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 if(currPwd.getText()!= null && newPwd.getText() != null && rePwd.getText() != null){
-                    // Get auth credentials from the user for re-authentication
                     AuthCredential credential = EmailAuthProvider
-                            .getCredential(mAuth.getCurrentUser().getEmail(),currPwd.getText().toString());
-                    Log.e("TAG", "Getting Re-Authenticated");
-                    mAuth.getCurrentUser().reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            .getCredential(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()),currPwd.getText().toString()); // Get auth credentials from the user
+                    mAuth.getCurrentUser().reauthenticate(credential)               //Re-Authenticate user with the received credentials
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 String newPass = newPwd.getText().toString();
-                                Log.e("TAG", "Field Validation ");
-                                if(newPass.equals(rePwd.getText().toString())) {
+                                if(newPass.equals(rePwd.getText().toString())) {    //Validate inserted password
                                     mAuth.getCurrentUser().updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
+                                        public void onComplete(@NonNull Task<Void> task) {      //Update new password to firebase authentication
                                             if (task.isSuccessful()) {
+                                                Toast.makeText(ChangePassActivity.this,"Password Changed",Toast.LENGTH_SHORT).show();
                                                 Log.e("TAG", "Password updated");
                                             } else {
+                                                Toast.makeText(ChangePassActivity.this,"Failed to Change Password",Toast.LENGTH_LONG).show();
                                                 Log.e("TAG", "Error password not updated"+task.getResult());
                                             }
                                         }

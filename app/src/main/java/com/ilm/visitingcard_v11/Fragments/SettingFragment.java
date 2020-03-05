@@ -40,21 +40,21 @@ public class SettingFragment extends Fragment {
 
         mail.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {           //To change the mail address
                 startActivity(new Intent(SettingFragment.this.getActivity(), ChangeMailActivity.class));
             }
         });
 
         pWord.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {           //To change the current password
                 startActivity(new Intent(SettingFragment.this.getActivity(), ChangePassActivity.class));
             }
         });
 
         deleteAcc.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {       //To delete current user
                 startActivity(new Intent(getContext(), DeleteAccountActivity.class));
             }
         });

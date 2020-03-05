@@ -4,69 +4,48 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ItemsModel implements Serializable {
-    private String fName, lName,eMail,profilePic,uName, front, back,position,company,address,UID,website;
+    private String fN, lN, eM, pPic, front, back, pos, cmp, adr,UID, web;
     private int pNo,wNo;
     private List<String> conn;
 
     public  ItemsModel(){
 
     }
-
-    public  ItemsModel(String uName, String eMail){
-        this.uName = uName;
-        this.eMail = eMail;
+    public void setfN(String fN) {
+        this.fN = fN;
     }
 
-    public ItemsModel(String fName, String lName, String eMail,String profilePic){
-        this.fName = fName;
-        this.lName = lName;
-        this.eMail = eMail;
-        this.profilePic = profilePic;
+    public void setlN(String lN) {
+        this.lN = lN;
     }
 
-    public void setfName(String fName) {
-        this.fName = fName;
+    public void seteM(String eM) {
+        this.eM = eM;
     }
 
-    public void setlName(String lName) {
-        this.lName = lName;
-    }
+    public String getfN() {
+        return fN;
+    }               //First Name
 
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
-    }
+    public String getlN() {
+        return lN;
+    }               //Last Name
 
-    public String getfName() {
-        return fName;
-    }
+    public String geteM() {
+        return eM;
+    }               //E-Mail
 
-    public String getlName() {
-        return lName;
-    }
+    public String getpPic() {
+        return pPic;
+    }           //Profile Picture
 
-    public String geteMail() {
-        return eMail;
-    }
-
-    public String getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(String profilePic) {
-        this.profilePic = profilePic;
-    }
-
-    public String getuName() {
-        return uName;
-    }
-
-    public void setuName(String uName) {
-        this.uName = uName;
+    public void setpPic(String pPic) {
+        this.pPic = pPic;
     }
 
     public String getFront() {
         return front;
-    }
+    }          //Front Card View
 
     public void setFront(String front) {
         this.front = front;
@@ -74,40 +53,40 @@ public class ItemsModel implements Serializable {
 
     public String getBack() {
         return back;
-    }
+    }           //Back Card View
 
     public void setBack(String back) {
         this.back = back;
     }
 
 
-    public String getPosition() {
-        return position;
+    public String getPos() {
+        return pos;
+    }              //Position
+
+    public void setPos(String pos) {
+        this.pos = pos;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public String getCmp() {
+        return cmp;
+    }              //Company
+
+    public void setCmp(String cmp) {
+        this.cmp = cmp;
     }
 
-    public String getCompany() {
-        return company;
-    }
+    public String getAdr() {
+        return adr;
+    }              //Address
 
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAdr(String adr) {
+        this.adr = adr;
     }
 
     public int getpNo() {
         return pNo;
-    }
+    }                  //Phone Number
 
     public void setpNo(int pNo) {
         this.pNo = pNo;
@@ -115,7 +94,7 @@ public class ItemsModel implements Serializable {
 
     public int getwNo() {
         return wNo;
-    }
+    }                   //Work Number
 
     public void setwNo(int wNo) {
         this.wNo = wNo;
@@ -123,7 +102,7 @@ public class ItemsModel implements Serializable {
 
     public List<String> getConn() {
         return conn;
-    }
+    }        //User Connection List
 
     public void setConn(List<String> conn) {
         this.conn = conn;
@@ -131,17 +110,17 @@ public class ItemsModel implements Serializable {
 
     public String getUID() {
         return UID;
-    }
+    }                //Scanned Connection UID
 
     public void setUID(String UID) {
         this.UID = UID;
     }
 
-    public String getWebsite() {
-        return website;
-    }
+    public String getWeb() {
+        return web;
+    }               //Website
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setWeb(String web) {
+        this.web = web;
     }
 }

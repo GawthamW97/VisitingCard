@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -30,12 +31,11 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
                 mImageView = itemView.findViewById(R.id.user_image);
                 mTextView1 = itemView.findViewById(R.id.user_name);
                 mTextView2 = itemView.findViewById(R.id.user_mail);
-
                 context = itemView.getContext();
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v) {   //Open Selected Item from Connection List
                         Log.e("POSITION",String.valueOf(getAdapterPosition()));
                         context.startActivity(new Intent(context,ItemsPreviewActivity.class).putExtra("items",mList.get(getAdapterPosition())));
                     }
@@ -48,21 +48,21 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         }
 
         @Override
-        public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {  // fill recycler tab with row values and view
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_item,
                     parent, false);
-            ListViewHolder evh = new ListViewHolder(v);
-            return evh;
+            ListViewHolder lvh = new ListViewHolder(v);
+            return lvh;
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
-        public void onBindViewHolder(ListViewHolder holder, int position) {
+        public void onBindViewHolder(ListViewHolder holder, int position) {     //set values for the fields in the row_items layout
             ItemsModel currentItem = mList.get(position);
             i = position;
-            Picasso.get().load(currentItem.getProfilePic()).into(holder.mImageView);
-            holder.mTextView1.setText(currentItem.getfName() + " "+currentItem.getlName());
-            holder.mTextView2.setText(currentItem.getCompany());
-
+            Picasso.get().load(currentItem.getpPic()).into(holder.mImageView);
+            holder.mTextView1.setText(currentItem.getfN() + " "+currentItem.getlN());
+            holder.mTextView2.setText(currentItem.getCmp());
         }
 
         @Override

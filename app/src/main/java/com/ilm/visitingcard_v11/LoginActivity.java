@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
         loginProgress.setVisibility(View.INVISIBLE);
 
         //ON BUTTON CLICK VERIFY THE FIELDS AND INPUTS
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                 String mail = userMail.getText().toString().trim();
                 String password = userPassword.getText().toString();
 
-                if (mail.isEmpty() || password.isEmpty()){
+                if (mail.isEmpty() || password.isEmpty()){          //Check of the input-filed are empty
                     showMessage("Please Verify all fields");
                     loginProgress.setVisibility(View.INVISIBLE);
                     btnLogin.setVisibility(View.VISIBLE);

@@ -37,32 +37,33 @@ public class AddFragment extends Fragment {
         gen_img = mView.findViewById(R.id.qr_image);
         mAuth = FirebaseAuth.getInstance();
 
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {                   //On press start HomeActivity
                 getActivity().finish();
                 startActivity(new Intent(getContext(), NavigationActivity.class));
             }
         });
 
-        //ADD THE SCANNED USER PROFILE TO THE CURRENT USER'S CONNECTION LIST
+
         bt_scan.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {                        //ADD THE SCANNED USER PROFILE TO THE CURRENT USER'S CONNECTION LIST
                 IntentIntegrator integrator = new IntentIntegrator(getActivity());
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
                 integrator.setPrompt("Scan!!");
                 integrator.setCameraId(0);
                 integrator.setBeepEnabled(false);
                 integrator.setBarcodeImageEnabled(false);
-                integrator.initiateScan();
+                integrator.initiateScan();                      //Initiate scanning process by opening camera
             }
         });
 
-        text2Qr = mAuth.getUid();
+        text2Qr = mAuth.getUid();                       // Get Current user's ID to generate QR Code
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try{
-            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,900,900);
+            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,900,900);     //Set the size of the QR Code Generated
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             gen_img.setImageBitmap(bitmap);

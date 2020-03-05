@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     private ArrayList<ItemsModel> itemList;
     private List<String> conn_list = null;
     private ProgressBar progressBar;
+    private LinearLayout layout;
 
     @Nullable
     @Override
@@ -52,20 +54,26 @@ public class HomeFragment extends Fragment {
         mView = inflater.inflate(R.layout.activity_main,container,false);
         progressBar = mView.findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
-        showData(mView);
-        progressBar.setVisibility(View.INVISIBLE);
+        layout = mView.findViewById(R.id.home_container);
+        layout.setVisibility(View.INVISIBLE);
         final SwipeRefreshLayout pullToRefresh = mView.findViewById(R.id.pullToRefresh);
+        showData(mView);
         // Refresh the view on pull down
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                progressBar.setVisibility(View.VISIBLE);
+                layout.setVisibility(View.INVISIBLE);
                 showData(mView);
                 pullToRefresh.setRefreshing(false);
+                progressBar.setVisibility(View.INVISIBLE);
+                layout.setVisibility(View.VISIBLE);
             }
         });
      return mView;
     }
 
+    //Show data when pull-to-refresh is used
     private void showData(View mView) {
         searchList = mView.findViewById(R.id.search_list);
         itemListView = mView.findViewById(R.id.item_list);
@@ -76,8 +84,7 @@ public class HomeFragment extends Fragment {
         itemListView.setLayoutManager(layoutManager);
         itemListView.setVisibility(View.INVISIBLE);
 
-        //Get a list of connections that the current user has.
-
+        //Get the list of connections that the current user has.
         db.collection("user").document(mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -95,20 +102,16 @@ public class HomeFragment extends Fragment {
                 });
 
         //Get the list of users from the database and compare with the list of users that the current user has connected
-
         db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 itemList = new ArrayList<ItemsModel>();
                 if(task.isSuccessful()){
-                    //Log.e("Error",task.getResult().getDocuments().toString());
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         if((conn_list != null)&&conn_list.contains(document.getId())){
                             ItemsModel model = document.toObject(ItemsModel.class);
-                            // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
-                            model.setUID(document.getId());
+                            model.setUID(document.getId());                           // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
                             itemList.add(model);
-//                                            Log.e("ID",conn_list.toString());
                         }else{
                             continue;
                         }
@@ -143,18 +146,21 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void filter(String text) {
+
+    private void filter(String text) {                           //Filter search values for each characters
         //new array list that will hold the filtered data
         ArrayList<ItemsModel> filterdNames = new ArrayList<>();
 
         //looping through existing elements
         for (ItemsModel model : itemList) {
-            //if the existing elements contains the search input
-            if ((model.getfName().toLowerCase().trim().contains(text.toLowerCase())) || (model.getCompany().toLowerCase().contains(text.toLowerCase()))){
+            if ((model.getfN().toLowerCase().trim().contains(text.toLowerCase()))
+                    || (model.getCmp().toLowerCase().contains(text.toLowerCase()))){        //if the existing elements contains the search input
+
                 //adding the element to filtered list
                 filterdNames.add(model);
             }
         }
+
         //calling a method of the adapter class and passing the filtered list
         listAdapter.filterList(filterdNames);
     }

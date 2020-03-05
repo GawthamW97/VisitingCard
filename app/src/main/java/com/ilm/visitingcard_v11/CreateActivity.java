@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -119,7 +118,7 @@ public class CreateActivity extends AppCompatActivity {
 
 
         // UPLOAD THE DATA THAT WAS FILLED IN THE FIELDS BY THE USER
-        fName.addTextChangedListener(new TextWatcher() {
+        fName.addTextChangedListener(new TextWatcher() {                 //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -137,7 +136,7 @@ public class CreateActivity extends AppCompatActivity {
 
             }
         });
-        lName.addTextChangedListener(new TextWatcher() {
+        lName.addTextChangedListener(new TextWatcher() {                 //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -155,7 +154,7 @@ public class CreateActivity extends AppCompatActivity {
 
             }
         });
-        company.addTextChangedListener(new TextWatcher() {
+        company.addTextChangedListener(new TextWatcher() {                   //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -173,6 +172,8 @@ public class CreateActivity extends AppCompatActivity {
 
             }
         });
+
+        //On Button click validate inserted data and if valid upload
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,6 +182,8 @@ public class CreateActivity extends AppCompatActivity {
                 lastName = lName.getText().toString().trim();
                 companySite = website.getText().toString().trim();
                 userIndustry = industry.getText().toString().trim();
+
+                // If the phone number and work number is not given set them to zero
                 if(pNo.getText().toString().trim().isEmpty()){
                     phoneNumber = 0;
                 }else {
@@ -195,18 +198,18 @@ public class CreateActivity extends AppCompatActivity {
                 userPosition = position.getText().toString().trim();
                 workAddress = address.getText().toString().trim();
 
+                // Validate inserted data in the fields
                 if (validateFName() | validateLName() | validateCompanyName()) {
                     // Create Map to store inserted values from the fields and use to upload it to the firebase
                     Map<Object, Object> user = new HashMap<>();
-                    user.put("fName", firstName);
-                    user.put("lName", lastName);
-                    user.put("company", companyName);
+                    user.put("fN", firstName);
+                    user.put("lN", lastName);
+                    user.put("cmp", companyName);
                     user.put("pNo", phoneNumber);
-                    user.put("address", workAddress);
-                    user.put("position", userPosition);
-                    user.put("eMail", mAuth.getCurrentUser().getEmail());
-                    user.put("website", companySite);
-                    user.put("industry", userIndustry);
+                    user.put("adr", workAddress);
+                    user.put("pos", userPosition);
+                    user.put("eM", mAuth.getCurrentUser().getEmail());
+                    user.put("web", companySite);
                     user.put("conn", user_conn_list);
                     uploadImage(user);                  //Upload card Images to the firebase
 
@@ -219,7 +222,8 @@ public class CreateActivity extends AppCompatActivity {
                             btnUpload.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
                             finish();
-                            startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+                            mAuth.signOut();
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));    //On uploading the data to database redirect to LoginActivity
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -267,12 +271,12 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(final Map<Object, Object> user){
+    private void uploadImage(final Map<Object, Object> user){   //Upload image to the Firebase Storage
         StorageReference imageName;
         for(i = 0; i<ImageList.size();i++){
             final Uri image = ImageList.get(i);
             if(i == 0) {
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");        //Set Custom Names for the uploading Images
             }else{
                 imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
             }
@@ -283,9 +287,8 @@ public class CreateActivity extends AppCompatActivity {
                     finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.e("TAG",String.valueOf(i));
                             String url = String.valueOf(uri);
-                            StoreLink(url,user);
+                            StoreLink(url,user);                    //Pass the value of hashmap and url to store in the firebase database
                         }
                     });
                 }
@@ -293,7 +296,7 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-    private void StoreLink(String url, Map<Object, Object> user) {
+    private void StoreLink(String url, Map<Object, Object> user) {      //Store image url from firebase Storage to firebase cloud storage
         urlList.add(url);
         if(urlList.size() == 2) {
             user.put("front",urlList.get(0));
@@ -303,12 +306,12 @@ public class CreateActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(CreateActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CreateActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(CreateActivity.this, "Failed to upload", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CreateActivity.this, "Failed to Upload", Toast.LENGTH_LONG).show();
                 }
             });
         }

@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,23 +59,24 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         final FirebaseAuth mAuth =FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        //check if the user hasn't filled the initial profile form
         db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Log.e("Fail", mAuth.getCurrentUser().getUid());
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = Objects.requireNonNull(doc).toObject(ItemsModel.class);
-//                    Log.e("list", Objects.requireNonNull(itemsModel).getfName().toString());
-                    if(itemsModel.getfName() == null || itemsModel.getlName() == null){
-                        startActivity(new Intent(NavigationActivity.this,CreateActivity.class));
+                    if(itemsModel.getfN() == null || itemsModel.getlN() == null){
+                        startActivity(new Intent(NavigationActivity.this,CreateActivity.class));        //If the user hasn't filled the initial form they will be redirected to CreateActivity
                     }
-                    userName.setText(Objects.requireNonNull(itemsModel).getfName() +" "+ itemsModel.getlName());
-                    userMail.setText(itemsModel.geteMail());
-                    Picasso.get().load(itemsModel.getProfilePic()).into(userImage);
 
+                    // Set the values for the fields in Navigation Menu
+                    userName.setText(Objects.requireNonNull(itemsModel).getfN() +" "+ Objects.requireNonNull(itemsModel).getlN());
+                    userMail.setText(itemsModel.geteM());
+                    Picasso.get().load(itemsModel.getpPic()).into(userImage);
                     Log.e("TAG", "Success");
                 }else{
                     Log.e("TAG", "Failed");
@@ -91,11 +93,13 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.addHeaderView(mView);
 
+        //Navigation Menu Action
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
 
+        //Initial Fragment for the NavigationActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container_fragment,new HomeFragment());
@@ -104,7 +108,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){        //If the navigation drawer is open, then close
             drawerLayout.closeDrawer(GravityCompat.START);
         }else{
             super.onBackPressed();
@@ -114,7 +118,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         drawerLayout.closeDrawer(GravityCompat.START);
-        if(menuItem.getItemId() == R.id.nav_home){
+        if(menuItem.getItemId() == R.id.nav_home){                                  //if the user selects HOME from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new HomeFragment());
@@ -122,7 +126,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentTransaction.commit();
         }
 
-        if(menuItem.getItemId() == R.id.nav_profile){
+        if(menuItem.getItemId() == R.id.nav_profile){                               //if the user selects PROFILE from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new ProfileFragment());
@@ -130,20 +134,20 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentTransaction.commit();
         }
 
-        if(menuItem.getItemId() == R.id.nav_addCard){
+        if(menuItem.getItemId() == R.id.nav_addCard){                               //if the user selects ADD/SHARE CARD from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new AddFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
-        if(menuItem.getItemId() == R.id.nav_logout){
+        if(menuItem.getItemId() == R.id.nav_logout){                                //if the user selects LOGOUT from navigation activity
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(NavigationActivity.this,LoginActivity.class));
         }
 
-        if(menuItem.getItemId() == R.id.nav_settings){
+        if(menuItem.getItemId() == R.id.nav_settings){                              //if the user selects SETTINGS from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_fragment,new SettingFragment());
@@ -153,7 +157,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                 return true;
     }
 
-    //AFTER THE SCAN IS COMPLETED AND THE SCANNED USER-ID IS PASSED TO 'ItemsPreviewActivity.java'
+    //AFTER THE SCAN IS COMPLETED, THE SCANNED USER-ID IS PASSED TO 'ItemsPreviewActivity.java'
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -163,7 +167,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             if (result.getContents() == null) {
                 Toast.makeText(this, "You cancelled the scanning!", Toast.LENGTH_LONG).show();
             } else {
-                startActivity(new Intent(this,ItemsPreviewActivity.class).putExtra("id",result.getContents()));
+                startActivity(new Intent(this,ItemsPreviewActivity.class).putExtra("id",result.getContents())); // scanned result is passed to the ItemsPreviewActivity
             }
         }
     }

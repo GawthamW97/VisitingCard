@@ -10,23 +10,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.ilm.visitingcard_v11.Fragments.DialogFragment;
-import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 
 public class ChangeMailActivity extends AppCompatActivity implements DialogFragment.DialogList {
 
     TextView confirm, cancel;
     EditText editMail;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -50,6 +47,14 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
                 startActivity(new Intent(ChangeMailActivity.this, NavigationActivity.class));
             }
         });
+
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                editMail.setText(null);
+            }
+        });
     }
 
     private void openDialog() {
@@ -59,30 +64,25 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
 
     @Override
     public void applyText(final String password) {
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        // Get auth credentials from the user for re-authentication
+        // Get credentials from the user for re-authentication
         AuthCredential credential = EmailAuthProvider
                 .getCredential(mAuth.getCurrentUser().getEmail(),password);
 
         mAuth.getCurrentUser().reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
+            public void onComplete(@NonNull Task<Void> task) { //Re-Authenticate user to change the Email
                 if(task.isSuccessful()) {
-                    Log.e("User", "Re-Authenticated");
                     mAuth.fetchSignInMethodsForEmail(editMail.getText().toString()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) { //Check if the new email address exist in the database
                             if(task.isSuccessful()){
                                 try{
-                                    if(task.getResult().getSignInMethods().size() == 1) {
+                                    if(task.getResult().getSignInMethods().size() == 1) {           // If the new email address exist in the database
                                         Log.e("TAG", "onComplete: Email address already exist");
                                         Toast.makeText(ChangeMailActivity.this,"Email exist",Toast.LENGTH_SHORT).show();
                                     }else{
                                         Log.e("TAG","Email can be added");
-
-                                        mAuth.getCurrentUser().updateEmail(editMail.getText().toString())
+                                        mAuth.getCurrentUser().updateEmail(editMail.getText().toString())       //update email address in firebase authentication
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {

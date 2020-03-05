@@ -55,9 +55,11 @@ public class ProfileFragment extends Fragment{
     private final int BACK_IMG_GALLERY = 3;
     Map<Object,Object> user;
 
-    private static ArrayList<Uri> ImageList = new ArrayList<>();
+    private static Map<Object,Uri> ImageList = new HashMap<>();
     private View mView;
     static ArrayList<String> urlList = new ArrayList<>();
+    ArrayList<Uri> img_collection = new ArrayList<>();
+
     StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
     @Nullable
@@ -101,8 +103,8 @@ public class ProfileFragment extends Fragment{
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
-                    if(itemsModel.getProfilePic() !=null) {
-                        Picasso.get().load(Objects.requireNonNull(itemsModel).getProfilePic()).into(profilePic);
+                    if(itemsModel.getpPic() !=null) {
+                        Picasso.get().load(Objects.requireNonNull(itemsModel).getpPic()).into(profilePic);
                     }
                     if(itemsModel.getFront() != null) {
                         Picasso.get().load(itemsModel.getFront()).into(cardFront);
@@ -110,15 +112,15 @@ public class ProfileFragment extends Fragment{
                     if(itemsModel.getBack() != null) {
                         Picasso.get().load(itemsModel.getBack()).into(cardBack);
                     }
-                    fName.setText(Objects.requireNonNull(itemsModel).getfName());
-                    lName.setText(Objects.requireNonNull(itemsModel).getlName());
-                    userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
-                    userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
-                    userCompany.setText(itemsModel.getCompany());
+                    fName.setText(Objects.requireNonNull(itemsModel).getfN());
+                    lName.setText(Objects.requireNonNull(itemsModel).getlN());
+                    userMail.setText(Objects.requireNonNull(itemsModel).geteM());
+                    userPosition.setText(Objects.requireNonNull(itemsModel).getPos());
+                    userCompany.setText(itemsModel.getCmp());
                     userPhone.setText(String.valueOf(itemsModel.getpNo()));
                     workPhone.setText(String.valueOf(itemsModel.getwNo()));
-                    userAddress.setText(itemsModel.getAddress());
-                    userSite.setText(itemsModel.getWebsite());
+                    userAddress.setText(itemsModel.getAdr());
+                    userSite.setText(itemsModel.getWeb());
                     Log.e("Success", "Success");
                 }
             }
@@ -126,50 +128,27 @@ public class ProfileFragment extends Fragment{
 
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(ImageList.isEmpty()) {
-                    Intent intent = CropImage.activity()
+            public void onClick(View v) {           //On profile image click open gallery and crop image
+                Intent intent = CropImage.activity()
                             .getIntent(getContext());
                     startActivityForResult(intent,CODE_IMAGE_GALLERY );
-                    Log.e("TAG1",ImageList.toString());
-                }else{
-                    Log.e("TAG1",ImageList.toString());
-                    Intent intent = CropImage.activity()
-                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
-                    startActivityForResult(intent, CODE_IMAGE_GALLERY);
-                }
+
             }
         });
         cardFront.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(ImageList.isEmpty()) {
-                    Intent intent = CropImage.activity()
+            public void onClick(View v) {           //On front card image click open gallery and crop image
+                Intent intent = CropImage.activity()
                             .getIntent(getContext());
                     startActivityForResult(intent,FRONT_IMG_GALLERY );
-                    Log.e("TAG1",ImageList.toString());
-                }else{
-                    Log.e("TAG1",ImageList.toString());
-                    Intent intent = CropImage.activity()
-                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
-                    startActivityForResult(intent, FRONT_IMG_GALLERY);
-                }
             }
         });
         cardBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(ImageList.isEmpty()) {
-                    Intent intent = CropImage.activity()
+            public void onClick(View v) {           //On front card image click open gallery and crop image
+                Intent intent = CropImage.activity()
                             .getIntent(getContext());
                     startActivityForResult(intent,BACK_IMG_GALLERY );
-                    Log.e("TAG1",ImageList.toString());
-                }else{
-                    Log.e("TAG1",ImageList.toString());
-                    Intent intent = CropImage.activity()
-                            .getIntent(getContext()).putExtra("pic",ImageList.get(1));
-                    startActivityForResult(intent, BACK_IMG_GALLERY);
-                }
             }
         });
 
@@ -177,6 +156,8 @@ public class ProfileFragment extends Fragment{
         updatebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Get Inserted data from the input-field
                 String firstName = fName.getText().toString();
                 String lastName = lName.getText().toString();
                 String workAddress = userAddress.getText().toString();
@@ -186,23 +167,25 @@ public class ProfileFragment extends Fragment{
                 String companySite = userSite.getText().toString();
                 int workNumber = Integer.parseInt(workPhone.getText().toString().trim());
 
+                //Add inserted data to the HashMap to upload it to the firebase
                 user = new HashMap<>();
-                user.put("fName",firstName);
-                user.put("lName",lastName);
-                user.put("company",companyName);
+                user.put("fN",firstName);
+                user.put("lN",lastName);
+                user.put("cmp",companyName);
                 user.put("pNo",phoneNumber);
                 user.put("wNo",workNumber);
-                user.put("address",workAddress);
-                user.put("position",position);
-                user.put("eMail",mAuth.getCurrentUser().getEmail());
-                user.put("website",companySite);
+                user.put("adr",workAddress);
+                user.put("pos",position);
+                user.put("eM",mAuth.getCurrentUser().getEmail());
+                user.put("web",companySite);
                 uploadImage(user);
 
+                //Ask user for confirmation when updating
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
+                            case DialogInterface.BUTTON_POSITIVE:           //If user selects yes as the confirmation option
                                 db.collection("user").document(Objects.requireNonNull(mAuth.getUid()))
                                         .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -217,8 +200,7 @@ public class ProfileFragment extends Fragment{
                                     }
                                 });
                                 break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
+                            case DialogInterface.BUTTON_NEGATIVE:           //If user selects no as the confirmation option
                                 break;
                         }
                     }
@@ -234,39 +216,80 @@ public class ProfileFragment extends Fragment{
     //GET IMAGE URL
     private void uploadImage(final Map<Object, Object> user){
         StorageReference imageName = null;
-        for(i = 0; i<ImageList.size();i++){
-            final Uri image = ImageList.get(i);
-            if(i == 0){
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/ProfilePic");
-            }
-            if(i == 1) {
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
-            }else if(i == 2){
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
-            }
-            final StorageReference finalImageName = imageName;
-            imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+        //Load images from the HashMap to the ArrayList
+        img_collection.add(0,ImageList.get("pPic"));
+        img_collection.add(1,ImageList.get("front"));
+        img_collection.add(2,ImageList.get("back"));
+        for(i = 0; i<img_collection.size();i++){
+            Uri image = null;
+                Uri image1 = ImageList.get("pPic");
+                Uri image2 = ImageList.get("front");
+                Uri image3 = ImageList.get("back");
+                if(i == 0 && img_collection.get(0) != null){        // If the profile pic is selected and cropped upload the image
+                    image = image1;
+                    imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/pPic");
+                    final StorageReference finalImageName = imageName;
+                    imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onSuccess(Uri uri) {
-                            Log.e("TAG",String.valueOf(i));
-                            String url = String.valueOf(uri);
-                            StoreLink(url,user,i);
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.e("TAG",String.valueOf(i));
+                                    String url = String.valueOf(uri);
+                                    StoreLink(url,user,i);
+                                }
+                            });
                         }
                     });
                 }
-            });
+                if(i == 1 && img_collection.get(1) != null){        // If the front card image is selected and cropped upload the image
+                    image = image2;
+                    imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
+                    final StorageReference finalImageName = imageName;
+                    imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.e("TAG",String.valueOf(i));
+                                    String url = String.valueOf(uri);
+                                    StoreLink(url,user,i);
+                                }
+                            });
+                        }
+                    });
+                }
+                if(i == 2 && img_collection.get(2) != null){ // If the back card image is selected and cropped upload the image
+                    image = image3;
+                    imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
+                    final StorageReference finalImageName = imageName;
+                    imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.e("TAG",String.valueOf(i));
+                                    String url = String.valueOf(uri);
+                                    StoreLink(url,user,i);
+                                }
+                            });
+                        }
+                    });
+                }
         }
     }
 
     //UPLOAD IMAGE TO DATABASE
-    private void StoreLink(String url,Map<Object,Object> user,int i) {
+    private void StoreLink(String url,Map<Object,Object> user,int i) {      //upload the images that user selected from gallery to firebase
         urlList.add(url);
-        if(urlList.size() == 2) {
-            user.put("front",urlList.get(0));
-            user.put("back",urlList.get(1));
+        if(urlList.size() == 3) {
+            user.put("pPic",urlList.get(0));
+            user.put("front",urlList.get(1));
+            user.put("back",urlList.get(2));
             db.collection("user").document(mAuth.getCurrentUser().getUid())
                     .set(user, SetOptions.merge())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -283,78 +306,76 @@ public class ProfileFragment extends Fragment{
         }
     }
 
+    // When user selects an image from the gallery for the result set the images to image view
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(requestCode == CODE_IMAGE_GALLERY && ImageList.isEmpty()){
-                Uri pic = data.getData();
-                ImageList.add(0,pic);
+        Intent intent = getActivity().getIntent();
+
+        if(resultCode == RESULT_OK && requestCode ==CODE_IMAGE_GALLERY) {           //when the user selects the profile picture
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            Uri pic = result.getUri();
+            if (ImageList.isEmpty()) {                                                          // if the profile pic is chosen first
+                ImageList.put("pPic", pic);
                 Picasso.get().load(pic).into(profilePic);
-            }else{
-                Uri pic = data.getData();
-                ImageList.add(0,pic);
-                if(ImageList.get(1)== null && ImageList.get(2) != null){
-                    Picasso.get().load(pic).into(profilePic);
-                    Picasso.get().load(ImageList.get(2)).into(cardBack);
-                }else if(ImageList.get(1)!= null && ImageList.get(2) == null){
-                    Picasso.get().load(pic).into(profilePic);
-                    Picasso.get().load(ImageList.get(1)).into(cardBack);
-                }else {
-                    Picasso.get().load(pic).into(profilePic);
-                    Picasso.get().load(ImageList.get(1)).into(cardBack);
-                    Picasso.get().load(ImageList.get(2)).into(cardBack);
+            } else {
+                ImageList.put("pPic", pic);
+                if (ImageList.get("front") == null && ImageList.get("back") != null) {          // if back card view is chosen before profile pic
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                } else if (ImageList.get("front") != null && ImageList.get("back") == null) {   // if front card view is chosen before profile pic
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("front")).into(cardFront);
+                } else {                                                                        // if front card view and back back view are chosen before front card view
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("front")).into(cardBack);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
                 }
             }
         }
-        Intent intent = getActivity().getIntent();
-        if(resultCode == RESULT_OK) {
+        if(resultCode == RESULT_OK && requestCode == FRONT_IMG_GALLERY) {               //when the user selects the front card view
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (requestCode == FRONT_IMG_GALLERY && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()) {
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-            } else if (requestCode == FRONT_IMG_GALLERY && ImageList.get(0) == null && ImageList.get(2) != null) {
+            Uri frontCard = result.getUri();
+            if (ImageList.isEmpty()) {                            //if front card view is chosen first
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+            } else if (ImageList.get("pPic") == null && ImageList.get("back") != null) {        // if back card view is chosen before front card view
                 Log.e("TAG1111", "PASS");
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(2)).into(cardBack);
-            }else if(requestCode == FRONT_IMG_GALLERY && ImageList.get(0) != null && ImageList.get(2) == null){
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(0)).into(profilePic);
-            }else{
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(0)).into(profilePic);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(2)).into(profilePic);
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+            } else if (ImageList.get("pPic") != null && ImageList.get("back") == null) {        // if profile pic is chosen before front card view
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+            } else {
+                ImageList.put("front", frontCard);                                              // if back card view and profile pic are chosen before front card view
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
             }
+        }
 
-            if (requestCode == BACK_IMG_GALLERY && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()) {
+            if(resultCode == RESULT_OK && requestCode == BACK_IMG_GALLERY){             //when the user selects the back card view
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 Uri backCard = result.getUri();
-                ImageList.add(2, backCard);
-                Picasso.get().load(ImageList.get(1)).into(cardBack);
-            } else if (requestCode == BACK_IMG_GALLERY && ImageList.get(0) == null && ImageList.get(1) != null) {
-                Log.e("TAG1122", "PASS");
-                Uri backCard = result.getUri();
-                ImageList.add(2, backCard);
-                Log.e("TAG", ImageList.toString());
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(2)).into(cardBack);
-            }else if(requestCode == BACK_IMG_GALLERY && ImageList.get(0) != null && ImageList.get(1) == null){
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(0)).into(profilePic);
-            }else{
-                Uri frontCard = result.getUri();
-                ImageList.add(1, frontCard);
-                Picasso.get().load(ImageList.get(0)).into(profilePic);
-                Picasso.get().load(ImageList.get(1)).into(cardFront);
-                Picasso.get().load(ImageList.get(2)).into(profilePic);
+                if (ImageList.isEmpty()) {                                                      //if back card view is chosen first
+                    ImageList.put("back", backCard);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                }else if (ImageList.get("pPic") == null && ImageList.get("front") != null) {    // if front card view is chosen before back card view
+                    Log.e("TAG1122", "PASS");
+                    ImageList.put("back", backCard);
+                    Log.e("TAG", ImageList.toString());
+                    Picasso.get().load(ImageList.get("front")).into(cardFront);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                }else if(ImageList.get("pPic") != null && ImageList.get("front") == null){      // if profile pic is chosen before back card view
+                    ImageList.put("back", backCard);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                }else{
+                    ImageList.put("back", backCard);                                            //if back card view and profile pic are chosen before front card view
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("front")).into(cardFront);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                }
             }
         }
     }
-}

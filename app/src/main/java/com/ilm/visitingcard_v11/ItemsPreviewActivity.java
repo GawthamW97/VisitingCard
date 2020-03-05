@@ -17,13 +17,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,7 +66,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items_preview);
 
-        RelativeLayout profile_view = findViewById(R.id.profile_container);
+        NestedScrollView scrollView = findViewById(R.id.scroll);
         ProgressBar progressBar = findViewById(R.id.progress_circular);
         // Hook up clicks on the thumbnail views.
         final View cardFront = findViewById(R.id.front);
@@ -77,7 +77,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
 
-        profile_view.setVisibility(View.INVISIBLE);
+        scrollView.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
         profilePic = findViewById(R.id.user_image);
@@ -97,20 +97,20 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         if(intent.getSerializableExtra("items") != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
-            Picasso.get().load(itemsModel.getProfilePic()).into(profilePic);
+            Picasso.get().load(itemsModel.getpPic()).into(profilePic);
             Picasso.get().load(itemsModel.getFront()).into(front);
             Picasso.get().load(itemsModel.getBack()).into(back);
-            fName.setText(Objects.requireNonNull(itemsModel).getfName());
-            lName.setText(Objects.requireNonNull(itemsModel).getlName());
-            userMail.setText(Objects.requireNonNull(itemsModel).geteMail());
-            userPosition.setText(Objects.requireNonNull(itemsModel).getPosition());
-            userCompany.setText(Objects.requireNonNull(itemsModel).getCompany());
+            fName.setText(Objects.requireNonNull(itemsModel).getfN());
+            lName.setText(Objects.requireNonNull(itemsModel).getlN());
+            userMail.setText(Objects.requireNonNull(itemsModel).geteM());
+            userPosition.setText(Objects.requireNonNull(itemsModel).getPos());
+            userCompany.setText(Objects.requireNonNull(itemsModel).getCmp());
             userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
-            if(itemsModel.getWebsite() == null){
+            if(itemsModel.getWeb() == null){
                 LinearLayout linearLayout = findViewById(R.id.website_layout);
                 linearLayout.setVisibility(View.GONE);
             }else{
-                userCompWeb.setText(itemsModel.getWebsite());
+                userCompWeb.setText(itemsModel.getWeb());
             }
             if(itemsModel.getwNo() == 0){
                 LinearLayout linearLayout = findViewById(R.id.work_phone_layout);
@@ -119,11 +119,11 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
             }
             delete_btn = findViewById(R.id.conn_delete);
-            if(itemsModel.getAddress() == null){
+            if(itemsModel.getAdr() == null){
                 LinearLayout linearLayout = findViewById(R.id.address_layout);
                 linearLayout.setVisibility(View.GONE);
             }else{
-                userAddress.setText(itemsModel.getAddress());
+                userAddress.setText(itemsModel.getAdr());
             }
 
             cardFront.setOnClickListener(new View.OnClickListener() {
@@ -165,13 +165,13 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             });
 
             progressBar.setVisibility(View.INVISIBLE);
-            profile_view.setVisibility(View.VISIBLE);
+            scrollView.setVisibility(View.VISIBLE);
 
         }
         //TODO: Get user profile after scanning
         Intent qrIntent = getIntent();
         if(qrIntent.getSerializableExtra("id")!= null){
-            profile_view.setVisibility(View.INVISIBLE);
+            scrollView.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             userID = (String) qrIntent.getSerializableExtra("id");
             Log.e("ID",userID);
@@ -207,17 +207,17 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot doc = task.getResult();
                             model = doc.toObject(ItemsModel.class);
-                            Picasso.get().load(model.getProfilePic()).into(profilePic);
+                            Picasso.get().load(model.getpPic()).into(profilePic);
                             Picasso.get().load(itemsModel.getFront()).into(front);
                             Picasso.get().load(itemsModel.getBack()).into(back);
-                            fName.setText(Objects.requireNonNull(itemsModel).getfName());
-                            lName.setText(Objects.requireNonNull(itemsModel).getlName());
-                            userMail.setText(Objects.requireNonNull(model).geteMail());
-                            userPosition.setText(Objects.requireNonNull(model).getPosition());
-                            userCompany.setText(model.getCompany());
+                            fName.setText(Objects.requireNonNull(itemsModel).getfN());
+                            lName.setText(Objects.requireNonNull(itemsModel).getlN());
+                            userMail.setText(Objects.requireNonNull(model).geteM());
+                            userPosition.setText(Objects.requireNonNull(model).getPos());
+                            userCompany.setText(model.getCmp());
                             userPhone.setText(String.valueOf(Objects.requireNonNull(model).getpNo()));
                             userWno.setText(String.valueOf(Objects.requireNonNull(model).getwNo()));
-                            userAddress.setText(model.getAddress());
+                            userAddress.setText(model.getAdr());
 
                             cardFront.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -264,7 +264,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 });
 
                 progressBar.setVisibility(View.INVISIBLE);
-                profile_view.setVisibility(View.VISIBLE);
+                scrollView.setVisibility(View.VISIBLE);
         }
 
         //TODO:On Click Activity for Phone Numbers and Email Address
@@ -274,7 +274,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setType("plain/text");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{itemsModel.geteMail()});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{itemsModel.geteM()});
                 startActivity(emailIntent);
             }
         });
