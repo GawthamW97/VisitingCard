@@ -216,7 +216,6 @@ public class ProfileFragment extends Fragment{
     //GET IMAGE URL
     private void uploadImage(final Map<Object, Object> user){
         StorageReference imageName = null;
-
         //Load images from the HashMap to the ArrayList
         img_collection.add(0,ImageList.get("pPic"));
         img_collection.add(1,ImageList.get("front"));
@@ -238,7 +237,8 @@ public class ProfileFragment extends Fragment{
                                 public void onSuccess(Uri uri) {
                                     Log.e("TAG",String.valueOf(i));
                                     String url = String.valueOf(uri);
-                                    StoreLink(url,user,i);
+                                    user.put("pPic",url);
+                                    StoreLink(user);
                                 }
                             });
                         }
@@ -256,7 +256,8 @@ public class ProfileFragment extends Fragment{
                                 public void onSuccess(Uri uri) {
                                     Log.e("TAG",String.valueOf(i));
                                     String url = String.valueOf(uri);
-                                    StoreLink(url,user,i);
+                                    user.put("front",url);
+                                    StoreLink(user);
                                 }
                             });
                         }
@@ -274,7 +275,8 @@ public class ProfileFragment extends Fragment{
                                 public void onSuccess(Uri uri) {
                                     Log.e("TAG",String.valueOf(i));
                                     String url = String.valueOf(uri);
-                                    StoreLink(url,user,i);
+                                    user.put("back",url);
+                                    StoreLink(user);
                                 }
                             });
                         }
@@ -284,12 +286,7 @@ public class ProfileFragment extends Fragment{
     }
 
     //UPLOAD IMAGE TO DATABASE
-    private void StoreLink(String url,Map<Object,Object> user,int i) {      //upload the images that user selected from gallery to firebase
-        urlList.add(url);
-        if(urlList.size() == 3) {
-            user.put("pPic",urlList.get(0));
-            user.put("front",urlList.get(1));
-            user.put("back",urlList.get(2));
+    private void StoreLink(Map<Object,Object> user) {      //upload the images that user selected from gallery to firebase
             db.collection("user").document(mAuth.getCurrentUser().getUid())
                     .set(user, SetOptions.merge())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -303,13 +300,10 @@ public class ProfileFragment extends Fragment{
                     Toast.makeText(getContext(), "Failed to upload", Toast.LENGTH_LONG).show();
                 }
             });
-        }
     }
 
     // When user selects an image from the gallery for the result set the images to image view
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Intent intent = getActivity().getIntent();
-
         if(resultCode == RESULT_OK && requestCode ==CODE_IMAGE_GALLERY) {           //when the user selects the profile picture
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             Uri pic = result.getUri();

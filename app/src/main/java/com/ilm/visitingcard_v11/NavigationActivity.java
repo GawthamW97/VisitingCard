@@ -69,10 +69,14 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = Objects.requireNonNull(doc).toObject(ItemsModel.class);
-                    if(itemsModel.getfN() == null || itemsModel.getlN() == null){
-                        startActivity(new Intent(NavigationActivity.this,CreateActivity.class));        //If the user hasn't filled the initial form they will be redirected to CreateActivity
+                    try {
+                        if (itemsModel.getfN() == null || itemsModel.getlN() == null) {
+                            startActivity(new Intent(NavigationActivity.this, CreateActivity.class));        //If the user hasn't filled the initial form they will be redirected to CreateActivity
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        startActivity(new Intent(NavigationActivity.this, CreateActivity.class));
                     }
-
                     // Set the values for the fields in Navigation Menu
                     userName.setText(Objects.requireNonNull(itemsModel).getfN() +" "+ Objects.requireNonNull(itemsModel).getlN());
                     userMail.setText(itemsModel.geteM());

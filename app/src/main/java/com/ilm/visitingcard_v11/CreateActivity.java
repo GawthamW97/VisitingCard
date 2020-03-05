@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,19 +41,21 @@ public class CreateActivity extends AppCompatActivity {
     TextView title;
     EditText fName,lName,company,pNo,wNo,address,position,website,industry;
     Button btnUpload;
-    ImageView frontView, backView;
+    ImageView cardFront, cardBack, profilePic;
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     int i;
-    int FRONT_VIEW = 20;
-    int BACK_VIEW = 30;
+    int CODE_IMAGE_GALLERY = 10;
+    int FRONT_IMG_GALLERY = 20;
+    int BACK_IMG_GALLERY = 30;
 
+    ArrayList<Uri> img_collection = new ArrayList<>();
     static ArrayList<String> urlList = new ArrayList<>();
     String firstName,lastName,workAddress,companyName,userPosition,companySite,userIndustry;
     int phoneNumber,workNumber;
     private ProgressBar progressBar;
 
-    static ArrayList<Uri> ImageList = new ArrayList<Uri>();
+    static Map<Object,Uri> ImageList = new HashMap<>();
     List<String> user_conn_list = new ArrayList<>();
 
     StorageReference Ref = FirebaseStorage.getInstance().getReference();
@@ -64,6 +67,7 @@ public class CreateActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progress);
 
+        profilePic = findViewById(R.id.profilePic);
         title = findViewById(R.id.title);
         fName = findViewById(R.id.fName);
         lName = findViewById(R.id.lName);
@@ -74,8 +78,8 @@ public class CreateActivity extends AppCompatActivity {
         address = findViewById(R.id.address);
         website = findViewById(R.id.url);
         industry = findViewById(R.id.industry);
-        frontView = findViewById(R.id.visiting_front);
-        backView = findViewById(R.id.visiting_back);
+        cardFront = findViewById(R.id.visiting_front);
+        cardBack = findViewById(R.id.visiting_back);
         btnUpload = findViewById(R.id.upload);
 
         mAuth = FirebaseAuth.getInstance();
@@ -83,36 +87,34 @@ public class CreateActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.INVISIBLE);
 
-        // On Image Click Open Gallery and crop selected image for Front Card View
-        frontView.setOnClickListener(new View.OnClickListener() {
+        profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(ImageList.isEmpty()) {               //If ImageList is empty this is the first image selected by the user
+            public void onClick(View v) {//If ImageList is empty this is the first image selected by the user
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this);
-                    startActivityForResult(intent, FRONT_VIEW);
-                }else{
+                    startActivityForResult(intent, CODE_IMAGE_GALLERY);
+            }
+        });
+
+        // On Image Click Open Gallery and crop selected image for Front Card View
+        cardFront.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {//If ImageList is empty this is the first image selected by the user
                     Intent intent = CropImage.activity()
-                            .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(1));
-                    startActivityForResult(intent, FRONT_VIEW);
-                }
+                            .getIntent(CreateActivity.this);
+                    startActivityForResult(intent, FRONT_IMG_GALLERY);
             }
         });
 
         // On Image Click Open Gallery and crop selected image for Back Card View
 
-        backView.setOnClickListener(new View.OnClickListener() {
+        cardBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ImageList.isEmpty()) {               // If ImageList is empty this is the first image selected by the user
+                // If ImageList is empty this is the first image selected by the user
                     Intent intent = CropImage.activity()
                             .getIntent(CreateActivity.this);
-                    startActivityForResult(intent, BACK_VIEW);
-                }else{
-                    Intent intent = CropImage.activity()
-                            .getIntent(CreateActivity.this).putExtra("pic",ImageList.get(0));
-                    startActivityForResult(intent, BACK_VIEW);
-                }
+                    startActivityForResult(intent, BACK_IMG_GALLERY);
             }
         });
 
@@ -222,7 +224,6 @@ public class CreateActivity extends AppCompatActivity {
                             btnUpload.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
                             finish();
-                            mAuth.signOut();
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));    //On uploading the data to database redirect to LoginActivity
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -244,77 +245,159 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Intent intent = getIntent();
-        if(resultCode == RESULT_OK) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data); //Get cropped image
-            if(requestCode == FRONT_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){ //If front view of the card is selected by the user aa the first image
-                Uri frontCard = result.getUri();
-                ImageList.add(0,frontCard);                         //Add id to the ImageList
-                Picasso.get().load(ImageList.get(0)).into(frontView);     //Set the ImageView with cropped image in the layout
-            }else if (requestCode == FRONT_VIEW){                //If the user selects the Front Card as the second image
-                Uri frontCard = result.getUri();
-                ImageList.add(0,frontCard);
-                Picasso.get().load(ImageList.get(0)).into(frontView);   //Set both image views with the images
-                Picasso.get().load(ImageList.get(1)).into(backView);    // From ImageList ArrayList
+        if(resultCode == RESULT_OK && requestCode ==CODE_IMAGE_GALLERY) {           //when the user selects the profile picture
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            Uri pic = result.getUri();
+            if (ImageList.isEmpty()) {                                                          // if the profile pic is chosen first
+                ImageList.put("pPic", pic);
+                Picasso.get().load(pic).into(profilePic);
+            } else {
+                ImageList.put("pPic", pic);
+                if (ImageList.get("front") == null && ImageList.get("back") != null) {          // if back card view is chosen before profile pic
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                } else if (ImageList.get("front") != null && ImageList.get("back") == null) {   // if front card view is chosen before profile pic
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("front")).into(cardFront);
+                } else {                                                                        // if front card view and back back view are chosen before front card view
+                    Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                    Picasso.get().load(ImageList.get("front")).into(cardBack);
+                    Picasso.get().load(ImageList.get("back")).into(cardBack);
+                }
             }
+        }
+        if(resultCode == RESULT_OK && requestCode == FRONT_IMG_GALLERY) {               //when the user selects the front card view
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            Uri frontCard = result.getUri();
+            if (ImageList.isEmpty()) {                            //if front card view is chosen first
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+            } else if (ImageList.get("pPic") == null && ImageList.get("back") != null) {        // if back card view is chosen before front card view
+                Log.e("TAG1111", "PASS");
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+            } else if (ImageList.get("pPic") != null && ImageList.get("back") == null) {        // if profile pic is chosen before front card view
+                ImageList.put("front", frontCard);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+            } else {
+                ImageList.put("front", frontCard);                                              // if back card view and profile pic are chosen before front card view
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+            }
+        }
 
-            if(requestCode == BACK_VIEW && intent.getSerializableExtra("pic") == null && ImageList.isEmpty()){  //If the user selects the Front Card as the first image
-                Uri backCard = result.getUri();
-                ImageList.add(1,backCard);                          //Add id to the ImageList
-                Picasso.get().load(ImageList.get(1)).into(backView);       //Set the ImageView with cropped image in the layout
-            }else if (requestCode == BACK_VIEW){        //If the user selects the Front Card as the second image
-                Uri backCard = result.getUri();
-                ImageList.add(1,backCard);
-                Picasso.get().load(ImageList.get(0)).into(frontView);   //Set both image views with the images
-                Picasso.get().load(ImageList.get(1)).into(backView);    // From ImageList ArrayList
+        if(resultCode == RESULT_OK && requestCode == BACK_IMG_GALLERY){             //when the user selects the back card view
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            Uri backCard = result.getUri();
+            if (ImageList.isEmpty()) {                                                      //if back card view is chosen first
+                ImageList.put("back", backCard);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+            }else if (ImageList.get("pPic") == null && ImageList.get("front") != null) {    // if front card view is chosen before back card view
+                Log.e("TAG1122", "PASS");
+                ImageList.put("back", backCard);
+                Log.e("TAG", ImageList.toString());
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+            }else if(ImageList.get("pPic") != null && ImageList.get("front") == null){      // if profile pic is chosen before back card view
+                ImageList.put("back", backCard);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+            }else{
+                ImageList.put("back", backCard);                                            //if back card view and profile pic are chosen before front card view
+                Picasso.get().load(ImageList.get("pPic")).into(profilePic);
+                Picasso.get().load(ImageList.get("front")).into(cardFront);
+                Picasso.get().load(ImageList.get("back")).into(cardBack);
             }
         }
     }
 
     private void uploadImage(final Map<Object, Object> user){   //Upload image to the Firebase Storage
-        StorageReference imageName;
-        for(i = 0; i<ImageList.size();i++){
-            final Uri image = ImageList.get(i);
-            if(i == 0) {
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");        //Set Custom Names for the uploading Images
-            }else{
-                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
+        StorageReference imageName = null;
+        //Load images from the HashMap to the ArrayList
+        img_collection.add(0,ImageList.get("pPic"));
+        img_collection.add(1,ImageList.get("front"));
+        img_collection.add(2,ImageList.get("back"));
+        for(i = 0; i<img_collection.size();i++){
+            Uri image = null;
+            Uri image1 = ImageList.get("pPic");
+            Uri image2 = ImageList.get("front");
+            Uri image3 = ImageList.get("back");
+            if(i == 0 && img_collection.get(0) != null){        // If the profile pic is selected and cropped upload the image
+                image = image1;
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/pPic");
+                final StorageReference finalImageName = imageName;
+                imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Log.e("TAG",String.valueOf(i));
+                                String url = String.valueOf(uri);
+                                user.put("pPic",url);
+                                StoreLink(user);
+                            }
+                        });
+                    }
+                });
             }
-            final StorageReference finalImageName = imageName;
-            imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String url = String.valueOf(uri);
-                            StoreLink(url,user);                    //Pass the value of hashmap and url to store in the firebase database
-                        }
-                    });
-                }
-            });
+            if(i == 1 && img_collection.get(1) != null){        // If the front card image is selected and cropped upload the image
+                image = image2;
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/FrontView");
+                final StorageReference finalImageName = imageName;
+                imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Log.e("TAG",String.valueOf(i));
+                                String url = String.valueOf(uri);
+                                user.put("front",url);
+                                StoreLink(user);
+                            }
+                        });
+                    }
+                });
+            }
+            if(i == 2 && img_collection.get(2) != null){ // If the back card image is selected and cropped upload the image
+                image = image3;
+                imageName = Ref.child(mAuth.getCurrentUser().getUid()+"/BackView");
+                final StorageReference finalImageName = imageName;
+                imageName.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        finalImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String url = String.valueOf(uri);
+                                user.put("back",url);
+                                StoreLink(user);
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
-    private void StoreLink(String url, Map<Object, Object> user) {      //Store image url from firebase Storage to firebase cloud storage
-        urlList.add(url);
-        if(urlList.size() == 2) {
-            user.put("front",urlList.get(0));
-            user.put("back",urlList.get(1));
-            db.collection("user").document(mAuth.getCurrentUser().getUid())
-                    .set(user, SetOptions.merge())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+    private void StoreLink(Map<Object, Object> user) {      //Store image url from firebase Storage to firebase cloud storage
+        db.collection("user").document(mAuth.getCurrentUser().getUid())
+                .set(user, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(CreateActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(CreateActivity.this, "Failed to Upload", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CreateActivity.this, "Failed to upload", Toast.LENGTH_LONG).show();
                 }
             });
-        }
     }
 
     // VALIDATE ALL FIELD INPUTS

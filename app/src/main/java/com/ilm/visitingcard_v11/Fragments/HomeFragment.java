@@ -50,7 +50,6 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         mView = inflater.inflate(R.layout.activity_main,container,false);
         progressBar = mView.findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
@@ -58,6 +57,8 @@ public class HomeFragment extends Fragment {
         layout.setVisibility(View.INVISIBLE);
         final SwipeRefreshLayout pullToRefresh = mView.findViewById(R.id.pullToRefresh);
         showData(mView);
+        progressBar.setVisibility(View.INVISIBLE);
+        layout.setVisibility(View.VISIBLE);
         // Refresh the view on pull down
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -73,7 +74,7 @@ public class HomeFragment extends Fragment {
      return mView;
     }
 
-    //Show data when pull-to-refresh is used
+    //Show data
     private void showData(View mView) {
         searchList = mView.findViewById(R.id.search_list);
         itemListView = mView.findViewById(R.id.item_list);
@@ -112,8 +113,6 @@ public class HomeFragment extends Fragment {
                             ItemsModel model = document.toObject(ItemsModel.class);
                             model.setUID(document.getId());                           // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
                             itemList.add(model);
-                        }else{
-                            continue;
                         }
                     }
                     listAdapter = new ListItemAdapter(itemList);

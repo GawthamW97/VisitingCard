@@ -24,12 +24,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 
 public class DeleteAccountActivity extends AppCompatActivity {
 
     EditText mail,pwd;
-    Button confirm, cancel;
+    Button confirm;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FragmentManager fragmentManager;
@@ -47,7 +46,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
         mail = findViewById(R.id.curr_user_mail);
         pwd = findViewById(R.id.curr_user_password);
         confirm = findViewById(R.id.confirm_btn);
-        cancel = findViewById(R.id.cancel_btn);
         progressBar = findViewById(R.id.progress);
 
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -118,16 +116,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {      //Back button
-            @Override
-            public void onClick(View v) {
-                fragmentManager = getSupportFragmentManager();
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_fragment,new SettingFragment());
-                fragmentTransaction.commit();
             }
         });
     }
