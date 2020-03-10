@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,16 +24,18 @@ import com.ilm.visitingcard_v11.Fragments.DialogFragment;
 
 public class ChangeMailActivity extends AppCompatActivity implements DialogFragment.DialogList {
 
-    TextView confirm, cancel;
+    TextView confirm, clear;
     EditText editMail;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_mail);
         confirm = findViewById(R.id.confirm);
-        cancel = findViewById(R.id.cancel);
+        clear = findViewById(R.id.clear);
         editMail = findViewById(R.id.edit_mail);
 
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -41,10 +45,11 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ChangeMailActivity.this, NavigationActivity.class));
+//                startActivity(new Intent(ChangeMailActivity.this, NavigationActivity.class));
+                editMail.setText(null);
             }
         });
 
@@ -108,5 +113,15 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        fragmentManager = getSupportFragmentManager();
+//        fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.pullToRefresh,new SettingFragment());
+//        fragmentTransaction.addToBackStack(SettingFragment.class.getSimpleName());
+//        fragmentTransaction.commit();
     }
 }

@@ -115,6 +115,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){        //If the navigation drawer is open, then close
             drawerLayout.closeDrawer(GravityCompat.START);
         }else{
+            System.exit(0);
             super.onBackPressed();
         }
     }

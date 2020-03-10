@@ -1,6 +1,5 @@
 package com.ilm.visitingcard_v11;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +22,7 @@ import java.util.Objects;
 public class ChangePassActivity extends AppCompatActivity{
 
     EditText newPwd,rePwd,currPwd;
-    Button confirmbtn,backbtn;
+    Button confirmbtn, clearbtn;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -42,7 +41,6 @@ public class ChangePassActivity extends AppCompatActivity{
                 newPwd.setText(null);
                 currPwd.setText(null);
                 rePwd.setText(null);
-                showData();
                 pullToRefresh.setRefreshing(false);
             }
         });
@@ -53,7 +51,7 @@ public class ChangePassActivity extends AppCompatActivity{
         newPwd = findViewById(R.id.new_password);
         rePwd = findViewById(R.id.re_new_password);
         confirmbtn = findViewById(R.id.confirm_btn);
-        backbtn = findViewById(R.id.back_btn);
+        clearbtn = findViewById(R.id.clear);
 
         confirmbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,10 +91,12 @@ public class ChangePassActivity extends AppCompatActivity{
                 }
             }
         });
-        backbtn.setOnClickListener(new View.OnClickListener() {
+        clearbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ChangePassActivity.this,NavigationActivity.class));
+                newPwd.setText(null);
+                currPwd.setText(null);
+                rePwd.setText(null);
             }
         });
     }

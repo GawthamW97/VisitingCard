@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.ilm.visitingcard_v11.ChangeMailActivity;
 import com.ilm.visitingcard_v11.ChangePassActivity;
@@ -20,8 +22,10 @@ import com.ilm.visitingcard_v11.R;
 
 public class SettingFragment extends Fragment {
 
-    Button mail,pWord,deleteAcc;
+    Button mail, pWord, deleteAcc;
     ImageView backBtn;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,7 +59,7 @@ public class SettingFragment extends Fragment {
         deleteAcc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {       //To delete current user
-                startActivity(new Intent(getContext(), DeleteAccountActivity.class));
+                startActivity(new Intent(SettingFragment.this.getActivity(), DeleteAccountActivity.class));
             }
         });
 

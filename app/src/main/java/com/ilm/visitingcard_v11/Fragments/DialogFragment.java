@@ -59,8 +59,7 @@ public class DialogFragment extends AppCompatDialogFragment {
         try{
             listener = (DialogList) context;
         }catch (ClassCastException e){
-            throw new ClassCastException(context.toString()+
-                    "must implement Dialog");
+            throw new ClassCastException(context.toString() + " must implement Dialog");
         }
     }
 

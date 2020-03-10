@@ -71,4 +71,28 @@
         android:layout_below="@+id/loginBtn"
         style="@style/AppTheme.RoundedCornerMaterialButton" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/registerBtn"
+        android:layout_centerHorizontal="true">
+    <TextView
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password? "
+        android:id="@+id/forgot_pwd_txt"/>
+
+    <TextView
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="click here"
+        android:id="@+id/forgot_pwd"
+        android:textColor="@color/bootstrap_brand_primary"/>
+    </LinearLayout>
+
 </RelativeLayout>

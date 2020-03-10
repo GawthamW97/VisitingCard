@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ProgressBar loginProgress;
     private FirebaseAuth mAuth;
+    private TextView resetPwd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +39,17 @@ public class LoginActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.registerBtn);
         loginProgress = findViewById(R.id.login_progress);
         mAuth = FirebaseAuth.getInstance();
+        resetPwd = findViewById(R.id.forgot_pwd);
 
         loginProgress.setVisibility(View.INVISIBLE);
+
+
+        resetPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,ResetPasswordActivity.class));
+            }
+        });
 
         //ON BUTTON CLICK VERIFY THE FIELDS AND INPUTS
         btnLogin.setOnClickListener(new View.OnClickListener() {
