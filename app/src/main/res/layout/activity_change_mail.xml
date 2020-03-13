@@ -39,6 +39,15 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="18sp"
                 android:id="@+id/edit_mail"/>
+            <EditText
+                android:layout_marginTop="5dp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Enter Password"
+                android:background="@android:drawable/editbox_background_normal"
+                android:layout_below="@+id/edit_mail"
+                android:id="@+id/curr_password"/>
 
             <RelativeLayout
                 android:layout_marginTop="15dp"
@@ -46,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/confirm_tab"
-                android:layout_below="@+id/edit_mail">
+                android:layout_below="@+id/curr_password">
 
                 <Button
                     android:id="@+id/clear"

@@ -1,13 +1,14 @@
 package com.ilm.visitingcard_v11;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -20,11 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity{
@@ -33,11 +30,8 @@ public class RegisterActivity extends AppCompatActivity{
     private Button regBtn;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private ProgressBar progressBar;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Uri profilePic;
     String eMail,pwd,pwdRe;
-    ArrayList<Uri> ImageList = new ArrayList<>();
-    Map<String,Object> user = new HashMap<>();
+    Animation myAnim;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -62,7 +56,6 @@ public class RegisterActivity extends AppCompatActivity{
         progressBar = findViewById(R.id.regProgressBar);
 
         mAuth = FirebaseAuth.getInstance();
-
         userMail.addTextChangedListener(new TextWatcher() {                 //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,7 +74,6 @@ public class RegisterActivity extends AppCompatActivity{
                 }
             }
         });
-
         password.addTextChangedListener(new TextWatcher() {              //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,7 +92,6 @@ public class RegisterActivity extends AppCompatActivity{
 
             }
         });
-
         re_passsword.addTextChangedListener(new TextWatcher() {              //Check for each value inserted by the user
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -119,13 +110,14 @@ public class RegisterActivity extends AppCompatActivity{
 
             }
         });
-
         //on button click upload the data to
             regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //REGISTER USER TO THE FIREBASE
-                regBtn.setVisibility(View.INVISIBLE);
+                myAnim = AnimationUtils.loadAnimation(RegisterActivity.this, R.anim.fade_out);
+                regBtn.startAnimation(myAnim);
                 progressBar.setVisibility(View.VISIBLE);
                 if(validateMail()|validatePassword()|validateRePassword()){     // Validate input-fields
                     mAuth.createUserWithEmailAndPassword(eMail, pwd)
@@ -140,14 +132,16 @@ public class RegisterActivity extends AppCompatActivity{
                                         Toast.makeText(RegisterActivity.this,"Registration Complete",Toast.LENGTH_LONG).show();
                                     }else{
                                         progressBar.setVisibility(View.INVISIBLE);
-                                        regBtn.setVisibility(View.VISIBLE);
+                                        myAnim = AnimationUtils.loadAnimation(RegisterActivity.this, R.anim.fade_in);
+                                        regBtn.startAnimation(myAnim);
                                         Toast.makeText(RegisterActivity.this,"Authentication Failed",Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 }else{
                     progressBar.setVisibility(View.INVISIBLE);
-                    regBtn.setVisibility(View.VISIBLE);
+                    myAnim = AnimationUtils.loadAnimation(RegisterActivity.this, R.anim.fade_in);
+                    regBtn.startAnimation(myAnim);
                     Toast.makeText(RegisterActivity.this,"Fill the Fields with proper values",Toast.LENGTH_SHORT).show();
                 }
             }

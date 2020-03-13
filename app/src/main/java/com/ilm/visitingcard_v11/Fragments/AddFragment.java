@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -19,6 +21,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.ilm.visitingcard_v11.Animation.MyBounceInterpolator;
 import com.ilm.visitingcard_v11.NavigationActivity;
 import com.ilm.visitingcard_v11.R;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -28,15 +31,15 @@ public class AddFragment extends Fragment {
     private ImageView gen_img;
     private String text2Qr;
     private FirebaseAuth mAuth;
+    Button bt_scan;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mView = inflater.inflate(R.layout.add_people, container, false);
-        Button bt_scan = mView.findViewById(R.id.btn_scan);
+        bt_scan = mView.findViewById(R.id.btn_scan);
         ImageView backBtn = mView.findViewById(R.id.back_btn);
         gen_img = mView.findViewById(R.id.qr_image);
         mAuth = FirebaseAuth.getInstance();
-
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +53,13 @@ public class AddFragment extends Fragment {
         bt_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {                        //ADD THE SCANNED USER PROFILE TO THE CURRENT USER'S CONNECTION LIST
+                // Animation for the button
+                Animation myAnim = AnimationUtils.loadAnimation(AddFragment.this.getContext(), R.anim.bounce);
+                MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 20);
+                myAnim.setInterpolator(interpolator);
+                bt_scan.startAnimation(myAnim);
+
+                //Initiate the scan sequence to scan the QR Code
                 IntentIntegrator integrator = new IntentIntegrator(getActivity());
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
                 integrator.setPrompt("Scan!!");

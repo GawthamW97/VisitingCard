@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,7 +46,7 @@ import java.util.Objects;
 
 public class ItemsPreviewActivity extends AppCompatActivity {
 
-    ImageView profilePic,front,back;
+    ImageView profilePic, cardFront, cardBack;
     TextView fName,lName,userPosition,userMail,userAddress,userPhone,userCompany,userWno,userCompWeb;
     Button delete_btn;
     ItemsModel itemsModel;
@@ -50,6 +54,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userID;
     ItemsModel model;
+    Animation myAnim;
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -68,11 +73,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
 
         NestedScrollView scrollView = findViewById(R.id.scroll);
         ProgressBar progressBar = findViewById(R.id.progress_circular);
-        // Hook up clicks on the thumbnail views.
-        final View cardFront = findViewById(R.id.front);
-//        cardFront.getBackground().setAlpha(200);
-        final View cardBack = findViewById(R.id.back);
-//        cardBack.getBackground().setAlpha(200);
         // Retrieve and cache the system's default "short" animation time.
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -81,8 +81,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         profilePic = findViewById(R.id.user_image);
-        front = findViewById(R.id.front);
-        back = findViewById(R.id.back);
+        cardFront = findViewById(R.id.front);
+        cardBack = findViewById(R.id.back);
         fName = findViewById(R.id.first_name);
         lName = findViewById(R.id.last_name);
         userMail = findViewById(R.id.conn_mail);
@@ -98,14 +98,17 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         if(intent.getSerializableExtra("items") != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
             Picasso.get().load(itemsModel.getpPic()).into(profilePic);
-            Picasso.get().load(itemsModel.getFront()).into(front);
-            Picasso.get().load(itemsModel.getBack()).into(back);
+            Picasso.get().load(itemsModel.getFront()).into(this.cardFront);
+            Picasso.get().load(itemsModel.getBack()).into(this.cardBack);
             fName.setText(Objects.requireNonNull(itemsModel).getfN());
             lName.setText(Objects.requireNonNull(itemsModel).getlN());
             userMail.setText(Objects.requireNonNull(itemsModel).geteM());
             userPosition.setText(Objects.requireNonNull(itemsModel).getPos());
             userCompany.setText(Objects.requireNonNull(itemsModel).getCmp());
             userPhone.setText(String.valueOf(Objects.requireNonNull(itemsModel).getpNo()));
+            delete_btn = findViewById(R.id.conn_delete);
+
+            // If the data retrieved from the database is empty or null, the view of the component will be set to INVISIBLE
             if(itemsModel.getWeb() == null){
                 LinearLayout linearLayout = findViewById(R.id.website_layout);
                 linearLayout.setVisibility(View.GONE);
@@ -118,7 +121,6 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             }else{
                 userWno.setText(String.valueOf(Objects.requireNonNull(itemsModel).getwNo()));
             }
-            delete_btn = findViewById(R.id.conn_delete);
             if(itemsModel.getAdr() == null){
                 LinearLayout linearLayout = findViewById(R.id.address_layout);
                 linearLayout.setVisibility(View.GONE);
@@ -143,12 +145,14 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             delete_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    myAnim = AnimationUtils.loadAnimation(ItemsPreviewActivity.this, R.anim.fade_out);
+                    delete_btn.startAnimation(myAnim);
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayRemove(itemsModel.getUID()));
+                                    db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).update("conn", FieldValue.arrayRemove(itemsModel.getUID()));
                                     startActivity(new Intent(ItemsPreviewActivity.this,NavigationActivity.class));
                                     break;
 
@@ -174,7 +178,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
             scrollView.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             userID = (String) qrIntent.getSerializableExtra("id");
-            Log.e("ID",userID);
+            Log.e("ID", Objects.requireNonNull(userID));
 
             db.collection("user").get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -182,7 +186,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<String> idList = new ArrayList<>();
                             if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                     Log.d("TAG", document.getId() + " => " + document.getData());
                                     idList.add(document.getId());
                                 }
@@ -206,12 +210,12 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot doc = task.getResult();
-                            model = doc.toObject(ItemsModel.class);
+                            model = Objects.requireNonNull(doc).toObject(ItemsModel.class);
                             Picasso.get().load(model.getpPic()).into(profilePic);
-                            Picasso.get().load(itemsModel.getFront()).into(front);
-                            Picasso.get().load(itemsModel.getBack()).into(back);
-                            fName.setText(Objects.requireNonNull(itemsModel).getfN());
-                            lName.setText(Objects.requireNonNull(itemsModel).getlN());
+                            Picasso.get().load(model.getFront()).into(ItemsPreviewActivity.this.cardFront);
+                            Picasso.get().load(model.getBack()).into(ItemsPreviewActivity.this.cardBack);
+                            fName.setText(Objects.requireNonNull(model).getfN());
+                            lName.setText(Objects.requireNonNull(model).getlN());
                             userMail.setText(Objects.requireNonNull(model).geteM());
                             userPosition.setText(Objects.requireNonNull(model).getPos());
                             userCompany.setText(model.getCmp());
@@ -239,7 +243,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
-                                            db.collection("user").document(mAuth.getCurrentUser().getUid()).update("conn", FieldValue.arrayUnion(userID));
+                                            db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).update("conn", FieldValue.arrayUnion(userID));
+                                            getNotification();
                                             break;
 
                                         case DialogInterface.BUTTON_NEGATIVE:
@@ -296,9 +301,19 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                 startActivity(workPhone);
             }
         });
+
+        userCompWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = itemsModel.getWeb();
+                Intent website = new Intent(Intent.ACTION_VIEW);
+                website.setData(Uri.parse(url));
+                startActivity(website);
+            }
+        });
     }
 
-    //TODO:ENLARGE THE SELECTED CARD FOR THE USER TO VIEW
+    //ENLARGE THE SELECTED CARD FOR THE USER TO VIEW
     private void zoomImageFromThumb(final View thumbView, String imageResId) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
@@ -307,8 +322,7 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         }
 
         // Load the high-resolution "zoomed-in" image.
-        final ImageView expandedImageView = (ImageView) findViewById(
-                R.id.expanded_image);
+        final ImageView expandedImageView = findViewById(R.id.expanded_image);
         Picasso.get().load(imageResId).into(expandedImageView);
 
         // Calculate the starting and ending bounds for the zoomed-in image.
@@ -443,6 +457,15 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     public void onBackPressed(){
         super.onBackPressed();
         finish();
-        startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
+    }
+
+    private void getNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"Add")
+                .setSmallIcon(R.drawable.common_full_open_on_phone)
+                .setContentTitle("E-Card")
+                .setContentText(model.getfN()+" "+model.getlN()+ " has been added to your card list");
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+        manager.notify(999,builder.build());
     }
 }

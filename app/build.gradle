@@ -29,7 +29,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'com.google.firebase:firebase-firestore:21.4.0'
+    implementation 'com.google.firebase:firebase-firestore:21.4.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -45,7 +45,7 @@ dependencies {
     //firebase auth
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     //firebase Core
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
     // firebase Storage
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     // firebase Database
@@ -73,4 +73,12 @@ dependencies {
     //Refresh Layout
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.github.yalantis:ucrop:2.2.4'
+    // Firebase messaging services
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
+    // Add the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.2.3'
+    // Add the SDK for Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
+    def multidex_version = "2.0.1"
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

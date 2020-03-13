@@ -47,6 +47,13 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBar;
     private LinearLayout layout;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,11 +61,16 @@ public class HomeFragment extends Fragment {
         progressBar = mView.findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
         layout = mView.findViewById(R.id.home_container);
-        layout.setVisibility(View.INVISIBLE);
         final SwipeRefreshLayout pullToRefresh = mView.findViewById(R.id.pullToRefresh);
-        showData(mView);
         progressBar.setVisibility(View.INVISIBLE);
-        layout.setVisibility(View.VISIBLE);
+        searchList = mView.findViewById(R.id.search_list);
+        itemListView = mView.findViewById(R.id.item_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(HomeFragment.this.getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        itemListView.setHasFixedSize(true);
+        itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
+        itemListView.setLayoutManager(layoutManager);
+        itemListView.setVisibility(View.INVISIBLE);
         // Refresh the view on pull down
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -71,20 +83,12 @@ public class HomeFragment extends Fragment {
                 layout.setVisibility(View.VISIBLE);
             }
         });
-     return mView;
+        showData(mView);
+        return mView;
     }
 
     //Show data
     private void showData(View mView) {
-        searchList = mView.findViewById(R.id.search_list);
-        itemListView = mView.findViewById(R.id.item_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(HomeFragment.this.getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        itemListView.setHasFixedSize(true);
-        itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
-        itemListView.setLayoutManager(layoutManager);
-        itemListView.setVisibility(View.INVISIBLE);
-
         //Get the list of connections that the current user has.
         db.collection("user").document(mAuth.getCurrentUser().getUid())
                 .get()

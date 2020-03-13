@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,8 +29,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -59,6 +67,8 @@ public class ProfileFragment extends Fragment{
     private View mView;
     static ArrayList<String> urlList = new ArrayList<>();
     ArrayList<Uri> img_collection = new ArrayList<>();
+    Button updatebtn;
+    Animation myAnim;
 
     StorageReference Ref = FirebaseStorage.getInstance().getReference();
 
@@ -77,7 +87,7 @@ public class ProfileFragment extends Fragment{
         userAddress = mView.findViewById(R.id.user_profile_location);
         cardFront = mView.findViewById(R.id.visiting_front);
         cardBack = mView.findViewById(R.id.visiting_back);
-        Button updatebtn = mView.findViewById(R.id.user_update);
+        updatebtn = mView.findViewById(R.id.user_update);
         ImageView backBtn = mView.findViewById(R.id.back_btn);
         userCompany = mView.findViewById(R.id.user_profile_company);
         userSite = mView.findViewById(R.id.user_profile_web);
@@ -157,6 +167,8 @@ public class ProfileFragment extends Fragment{
             @Override
             public void onClick(View v) {
 
+                myAnim = AnimationUtils.loadAnimation(ProfileFragment.this.getContext(), R.anim.bounce);
+                updatebtn.startAnimation(myAnim);
                 //Get Inserted data from the input-field
                 String firstName = fName.getText().toString();
                 String lastName = lName.getText().toString();
@@ -190,13 +202,32 @@ public class ProfileFragment extends Fragment{
                                         .set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(ProfileFragment.this.getActivity(),"Successfully Updated",Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(getContext(),NavigationActivity.class));
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(ProfileFragment.this.getActivity(),"Failed to Update",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                db.collection("user").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+//                                        List<DocumentChange> children = queryDocumentSnapshots.getDocumentChanges();
+                                        FirebaseMessaging.getInstance().subscribeToTopic("updated")
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        String msg ="Successfully Updated";
+                                                        if (!task.isSuccessful()) {
+                                                            msg = "Failed";
+                                                        }
+                                                        Log.d("TAG", msg);
+                                                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                        getNotification();
                                     }
                                 });
                                 break;
@@ -283,6 +314,16 @@ public class ProfileFragment extends Fragment{
                     });
                 }
         }
+    }
+
+    private void getNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(),"Update")
+                .setSmallIcon(R.drawable.common_full_open_on_phone)
+                .setContentTitle("E-Card")
+                .setContentText("Account has been updated");
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(getContext());
+        manager.notify(999,builder.build());
     }
 
     //UPLOAD IMAGE TO DATABASE

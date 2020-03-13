@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ public class ChangePassActivity extends AppCompatActivity{
 
         showData();
 
+        // On pull down refresh activation
         final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -46,7 +48,7 @@ public class ChangePassActivity extends AppCompatActivity{
         });
     }
 
-    private void showData() {
+    private void showData() {                       // Show data on the activity view
         currPwd = findViewById(R.id.current_pwd);
         newPwd = findViewById(R.id.new_password);
         rePwd = findViewById(R.id.re_new_password);
@@ -58,7 +60,9 @@ public class ChangePassActivity extends AppCompatActivity{
             public void onClick(View v) {
                 if(currPwd.getText()!= null && newPwd.getText() != null && rePwd.getText() != null){
                     AuthCredential credential = EmailAuthProvider
-                            .getCredential(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()),currPwd.getText().toString()); // Get auth credentials from the user
+                            .getCredential(Objects.requireNonNull
+                                    (Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()),currPwd.getText().toString()); // Get auth credentials from the user
+
                     mAuth.getCurrentUser().reauthenticate(credential)               //Re-Authenticate user with the received credentials
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -72,6 +76,9 @@ public class ChangePassActivity extends AppCompatActivity{
                                             if (task.isSuccessful()) {
                                                 Toast.makeText(ChangePassActivity.this,"Password Changed",Toast.LENGTH_SHORT).show();
                                                 Log.e("TAG", "Password updated");
+                                                mAuth.signOut();
+                                                finish();
+                                                startActivity(new Intent(ChangePassActivity.this,LoginActivity.class));
                                             } else {
                                                 Toast.makeText(ChangePassActivity.this,"Failed to Change Password",Toast.LENGTH_LONG).show();
                                                 Log.e("TAG", "Error password not updated"+task.getResult());
@@ -84,7 +91,7 @@ public class ChangePassActivity extends AppCompatActivity{
                                 }
                             } else {
                                 Log.e("TAG", "Error auth failed");
-                                Toast.makeText(ChangePassActivity.this,"Error auth failed",Toast.LENGTH_LONG).show();
+                                Toast.makeText(ChangePassActivity.this,"Error Authentication failed",Toast.LENGTH_LONG).show();
                             }
                         }
                     });

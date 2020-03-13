@@ -1,6 +1,8 @@
 package com.ilm.visitingcard_v11;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,11 +48,19 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     FragmentTransaction fragmentTransaction;
     TextView userName,userMail;
     ImageView userImage;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel =
+                    new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            Objects.requireNonNull(manager).createNotificationChannel(channel);
+        }
 
         View mView = getLayoutInflater().inflate(R.layout.nav_header,null);
         userName = mView.findViewById(R.id.nav_user);
@@ -104,9 +115,11 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         actionBarDrawerToggle.syncState();
 
         //Initial Fragment for the NavigationActivity
+
+//        viewPager.setOffscreenPageLimit(4);
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container_fragment,new HomeFragment());
+        fragmentTransaction.add(R.id.container_fragment,new HomeFragment());
         fragmentTransaction.commit();
     }
 
@@ -115,7 +128,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){        //If the navigation drawer is open, then close
             drawerLayout.closeDrawer(GravityCompat.START);
         }else{
-            System.exit(0);
+//            System.exit(0);
             super.onBackPressed();
         }
     }
@@ -134,7 +147,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if(menuItem.getItemId() == R.id.nav_profile){                               //if the user selects PROFILE from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new ProfileFragment());
+            fragmentTransaction.add(R.id.container_fragment,new ProfileFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
@@ -142,7 +155,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if(menuItem.getItemId() == R.id.nav_addCard){                               //if the user selects ADD/SHARE CARD from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new AddFragment());
+            fragmentTransaction.add(R.id.container_fragment,new AddFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
@@ -155,7 +168,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if(menuItem.getItemId() == R.id.nav_settings){                              //if the user selects SETTINGS from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_fragment,new SettingFragment());
+            fragmentTransaction.add(R.id.container_fragment,new SettingFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }

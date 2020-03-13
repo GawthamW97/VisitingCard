@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,13 +20,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.ilm.visitingcard_v11.Fragments.DialogFragment;
 
+import java.util.Objects;
+
 public class ChangeMailActivity extends AppCompatActivity implements DialogFragment.DialogList {
 
     TextView confirm, clear;
     EditText editMail;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
+//    FragmentManager fragmentManager;
+//    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
     public void applyText(final String password) {
         // Get credentials from the user for re-authentication
         AuthCredential credential = EmailAuthProvider
-                .getCredential(mAuth.getCurrentUser().getEmail(),password);
+                .getCredential(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()),password);
 
         mAuth.getCurrentUser().reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -115,13 +115,4 @@ public class ChangeMailActivity extends AppCompatActivity implements DialogFragm
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-//        fragmentManager = getSupportFragmentManager();
-//        fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.pullToRefresh,new SettingFragment());
-//        fragmentTransaction.addToBackStack(SettingFragment.class.getSimpleName());
-//        fragmentTransaction.commit();
-    }
 }

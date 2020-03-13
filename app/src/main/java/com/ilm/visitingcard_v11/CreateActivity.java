@@ -7,6 +7,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,6 +46,7 @@ public class CreateActivity extends AppCompatActivity {
     ImageView cardFront, cardBack, profilePic;
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+    Animation myAnim;
     int i;
     int CODE_IMAGE_GALLERY = 10;
     int FRONT_IMG_GALLERY = 20;
@@ -179,7 +182,9 @@ public class CreateActivity extends AppCompatActivity {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnUpload.setVisibility(View.INVISIBLE);
+
+                myAnim = AnimationUtils.loadAnimation(CreateActivity.this, R.anim.fade_out);
+                btnUpload.startAnimation(myAnim);
                 progressBar.setVisibility(View.VISIBLE);
                 lastName = lName.getText().toString().trim();
                 companySite = website.getText().toString().trim();
@@ -221,7 +226,8 @@ public class CreateActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(CreateActivity.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
-                            btnUpload.setVisibility(View.VISIBLE);
+                            myAnim = AnimationUtils.loadAnimation(CreateActivity.this, R.anim.fade_in);
+                            btnUpload.startAnimation(myAnim);
                             progressBar.setVisibility(View.INVISIBLE);
                             finish();
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));    //On uploading the data to database redirect to LoginActivity
@@ -230,12 +236,14 @@ public class CreateActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(CreateActivity.this, "Failed to Update", Toast.LENGTH_SHORT).show();
-                            btnUpload.setVisibility(View.VISIBLE);
+                            myAnim = AnimationUtils.loadAnimation(CreateActivity.this, R.anim.fade_in);
+                            btnUpload.startAnimation(myAnim);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }else{
-                    btnUpload.setVisibility(View.VISIBLE);
+                    myAnim = AnimationUtils.loadAnimation(CreateActivity.this, R.anim.fade_in);
+                    btnUpload.startAnimation(myAnim);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             }
@@ -400,7 +408,7 @@ public class CreateActivity extends AppCompatActivity {
             });
     }
 
-    // VALIDATE ALL FIELD INPUTS
+    // VALIDATE INPUT FIELDS
     private boolean validateFName(){
         String firstName = fName.getText().toString().trim();
         if(firstName.isEmpty()){
