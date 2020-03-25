@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -25,8 +26,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,10 +37,16 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ItemsPreviewActivity extends AppCompatActivity {
@@ -244,6 +249,15 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
                                             db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).update("conn", FieldValue.arrayUnion(userID));
+                                            Map<Object,Object> notify = new HashMap<>();
+                                            notify.put("msg","New Connection is added "+ model.getfN());
+                                            Date c = Calendar.getInstance().getTime();
+                                            @SuppressLint("SimpleDateFormat")
+                                            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                                            String formattedDate = df.format(c);
+                                            notify.put("date",formattedDate);
+                                            db.collection("user").document(mAuth.getCurrentUser().getUid())
+                                                    .collection("notify").add(notify);
                                             getNotification();
                                             break;
 
@@ -460,12 +474,29 @@ public class ItemsPreviewActivity extends AppCompatActivity {
     }
 
     private void getNotification(){
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"Add")
-                .setSmallIcon(R.drawable.common_full_open_on_phone)
-                .setContentTitle("E-Card")
-                .setContentText(model.getfN()+" "+model.getlN()+ " has been added to your card list");
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"Add")
+//                .setSmallIcon(R.drawable.common_full_open_on_phone)
+//                .setContentTitle("E-Card")
+//                .setContentText(model.getfN()+" "+model.getlN()+ " has been added to your card list");
+//
+//        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+//        manager.notify(999,builder.build());
 
-        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-        manager.notify(999,builder.build());
+        FirebaseMessaging.getInstance().subscribeToTopic("upload")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Success";
+                        if (!task.isSuccessful()) {
+                            msg = "Success";
+                        }
+                        Log.d("TAG", msg);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
     }
 }

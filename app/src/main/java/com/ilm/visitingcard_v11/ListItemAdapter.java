@@ -21,12 +21,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         private Context context;
         private int i;
 
-        public class ListViewHolder extends RecyclerView.ViewHolder {
-            public ImageView mImageView;
-            public TextView mTextView1;
-            public TextView mTextView2;
+        class ListViewHolder extends RecyclerView.ViewHolder {
+            ImageView mImageView;
+            TextView mTextView1;
+            TextView mTextView2;
 
-            public ListViewHolder(final View itemView) {
+            ListViewHolder(final View itemView) {
                 super(itemView);
                 mImageView = itemView.findViewById(R.id.user_image);
                 mTextView1 = itemView.findViewById(R.id.user_name);
@@ -51,8 +51,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {  // fill recycler tab with row values and view
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_item,
                     parent, false);
-            ListViewHolder lvh = new ListViewHolder(v);
-            return lvh;
+            return new ListViewHolder(v);
         }
 
         @SuppressLint("SetTextI18n")

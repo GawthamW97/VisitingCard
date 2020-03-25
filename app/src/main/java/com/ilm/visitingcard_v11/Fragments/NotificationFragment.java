@@ -22,38 +22,26 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ilm.visitingcard_v11.ItemsModel;
-import com.ilm.visitingcard_v11.ListItemAdapter;
+import com.ilm.visitingcard_v11.Notification;
+import com.ilm.visitingcard_v11.NotificationAdapter;
 import com.ilm.visitingcard_v11.R;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
-public class HomeFragment extends Fragment {
+public class NotificationFragment extends Fragment {
 
-    private ListItemAdapter listAdapter;
+    private View mView;
+    private NotificationAdapter notificationAdapter;
     private RecyclerView itemListView;
     private EditText searchList;
-    private View mView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private ArrayList<ItemsModel> itemList;
-    private List<String> conn_list = null;
+    private ArrayList<Notification> itemList;
     private ProgressBar progressBar;
-    private LinearLayout layout;
-
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
+    private LinearLayout layout;;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +53,7 @@ public class HomeFragment extends Fragment {
         progressBar.setVisibility(View.INVISIBLE);
         searchList = mView.findViewById(R.id.search_list);
         itemListView = mView.findViewById(R.id.item_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(HomeFragment.this.getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(NotificationFragment.this.getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         itemListView.setHasFixedSize(true);
         itemListView.addItemDecoration(new DividerItemDecoration(itemListView.getContext(), layoutManager.getOrientation()));
@@ -89,38 +77,21 @@ public class HomeFragment extends Fragment {
 
     //Show data
     private void showData(View mView) {
-        //Get the list of connections that the current user has.
+        //Get the list of Notification from the database and compare with the list of users that the current user has connected
         db.collection("user").document(mAuth.getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot doc = task.getResult();
-                        ItemsModel list = doc.toObject(ItemsModel.class);
-                        if(list.getConn()== null){
-                            conn_list = null;
-                        }else
-                        {
-                            conn_list = Objects.requireNonNull(list).getConn();
-                        }
-                    }
-                });
-
-        //Get the list of users from the database and compare with the list of users that the current user has connected
-        db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+                .collection("notify").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                itemList = new ArrayList<ItemsModel>();
+                itemList = new ArrayList<Notification>();
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        if((conn_list != null)&&conn_list.contains(document.getId())){
-                            ItemsModel model = document.toObject(ItemsModel.class);
-                            model.setUID(document.getId());                           // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
-                            itemList.add(model);
-                        }
+                        Notification model = document.toObject(Notification.class);
+                        model.setUID(document.getId());                           // SET THE UID FROM FIRESTORE OF THE ITEM TO THE OBJECT
+                        itemList.add(model);
                     }
-                    listAdapter = new ListItemAdapter(itemList);
-                    itemListView.setAdapter(listAdapter);
+                    notificationAdapter = new NotificationAdapter(itemList);
+                    itemListView.setAdapter(notificationAdapter);
                 } else {
                     Log.d("TAG", "Error getting documents: ", task.getException());
                 }
@@ -149,31 +120,21 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
     private void filter(String text) {                           //Filter search values for each characters
         //new array list that will hold the filtered data
-        ArrayList<ItemsModel> filterdNames = new ArrayList<>();
+        ArrayList<Notification> filterdNames = new ArrayList<>();
 
         //looping through existing elements
-        try {
-            for (ItemsModel model : itemList) {
-                if ((model.getfN().toLowerCase().trim().contains(text.toLowerCase()))
-                        || (model.getCmp().toLowerCase().contains(text.toLowerCase()))) {        //if the existing elements contains the search input
+        for (Notification model : itemList) {
+            if ((model.getName().toLowerCase().trim().contains(text.toLowerCase()))
+                    || (model.getNotificationMessage().toLowerCase().contains(text.toLowerCase()))){        //if the existing elements contains the search input
 
-                    //adding the element to filtered list
-                    filterdNames.add(model);
-                    Log.e("TAG", filterdNames.toString());
-                }
+                //adding the element to filtered list
+                filterdNames.add(model);
             }
-            //calling a method of the adapter class and passing the filtered list
-            listAdapter.filterList(filterdNames);
-        }catch (Exception e){
-            e.printStackTrace();
         }
+
+        //calling a method of the adapter class and passing the filtered list
+        notificationAdapter.filterList(filterdNames);
     }
-
 }
-
-
-
-

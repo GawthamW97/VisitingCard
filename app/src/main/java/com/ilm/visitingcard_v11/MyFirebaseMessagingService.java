@@ -1,5 +1,6 @@
 package com.ilm.visitingcard_v11;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -23,6 +24,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
         manager.notify(999,builder.build());
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
     }
 }
 

@@ -20,7 +20,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +31,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.ilm.visitingcard_v11.Fragments.AddFragment;
 import com.ilm.visitingcard_v11.Fragments.HomeFragment;
+import com.ilm.visitingcard_v11.Fragments.NotificationFragment;
 import com.ilm.visitingcard_v11.Fragments.ProfileFragment;
 import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 import com.squareup.picasso.Picasso;
@@ -48,7 +48,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     FragmentTransaction fragmentTransaction;
     TextView userName,userMail;
     ImageView userImage;
-    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +158,15 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
+
+        if(menuItem.getItemId() == R.id.nav_notifications){
+            fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.container_fragment,new NotificationFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+
         if(menuItem.getItemId() == R.id.nav_logout){                                //if the user selects LOGOUT from navigation activity
             FirebaseAuth.getInstance().signOut();
             finish();

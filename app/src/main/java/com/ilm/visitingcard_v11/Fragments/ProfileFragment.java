@@ -40,6 +40,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ilm.visitingcard_v11.ItemsModel;
 import com.ilm.visitingcard_v11.NavigationActivity;
+import com.ilm.visitingcard_v11.Notification;
 import com.ilm.visitingcard_v11.R;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -210,6 +211,21 @@ public class ProfileFragment extends Fragment{
                                         Toast.makeText(ProfileFragment.this.getActivity(),"Failed to Update",Toast.LENGTH_SHORT).show();
                                     }
                                 });
+
+                                db.collection("user").document(mAuth.getUid())
+                                        .collection("notify").document("1")
+                                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            DocumentSnapshot doc = task.getResult();
+                                            Notification model = doc.toObject(Notification.class);
+                                            Log.e("TAG",model.getName().toString());
+                                        }
+                                    }
+                                });
+
+
 
                                 db.collection("user").addSnapshotListener(new EventListener<QuerySnapshot>() {
                                     @Override
