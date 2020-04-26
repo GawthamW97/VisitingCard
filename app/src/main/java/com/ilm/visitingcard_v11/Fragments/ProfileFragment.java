@@ -114,13 +114,21 @@ public class ProfileFragment extends Fragment{
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     ItemsModel itemsModel = doc.toObject(ItemsModel.class);
-                    if(itemsModel.getpPic() !=null) {
-                        Picasso.get().load(Objects.requireNonNull(itemsModel).getpPic()).into(profilePic);
+                    if (itemsModel.getpPic().isEmpty()) {
+                        profilePic.setImageResource(R.drawable.ic_person_black_24dp);
+                    } else{
+                        Picasso.get().load(itemsModel.getpPic()).into(profilePic);
                     }
-                    if(itemsModel.getFront() != null) {
+
+                    if (itemsModel.getFront().isEmpty()) {
+                        cardFront.setImageResource(R.drawable.ic_image);
+                    } else{
                         Picasso.get().load(itemsModel.getFront()).into(cardFront);
                     }
-                    if(itemsModel.getBack() != null) {
+
+                    if (itemsModel.getBack().isEmpty()) {
+                        cardBack.setImageResource(R.drawable.ic_image);
+                    } else{
                         Picasso.get().load(itemsModel.getBack()).into(cardBack);
                     }
                     fName.setText(Objects.requireNonNull(itemsModel).getfN());

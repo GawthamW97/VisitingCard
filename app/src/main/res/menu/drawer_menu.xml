@@ -17,11 +17,6 @@
             android:id="@+id/nav_addCard"
             android:icon="@drawable/ic_add_box"
             android:title="Add/Share Card"/>
-
-        <item
-            android:id="@+id/nav_notifications"
-            android:icon="@android:drawable/stat_notify_chat"
-            android:title="Notifications"/>
     </group>
 
     <item android:title="Options">

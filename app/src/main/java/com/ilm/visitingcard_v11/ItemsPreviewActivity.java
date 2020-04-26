@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -40,13 +39,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ItemsPreviewActivity extends AppCompatActivity {
@@ -102,9 +96,23 @@ public class ItemsPreviewActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         if(intent.getSerializableExtra("items") != null){
             itemsModel = (ItemsModel) intent.getSerializableExtra("items");
-            Picasso.get().load(itemsModel.getpPic()).into(profilePic);
-            Picasso.get().load(itemsModel.getFront()).into(this.cardFront);
-            Picasso.get().load(itemsModel.getBack()).into(this.cardBack);
+            if (itemsModel.getpPic().isEmpty()) {
+                profilePic.setImageResource(R.drawable.ic_person_black_24dp);
+            } else{
+                Picasso.get().load(itemsModel.getpPic()).into(profilePic);
+            }
+
+            if (itemsModel.getFront().isEmpty()) {
+                cardFront.setImageResource(R.drawable.ic_image);
+            } else{
+                Picasso.get().load(itemsModel.getFront()).into(cardFront);
+            }
+
+            if (itemsModel.getBack().isEmpty()) {
+                cardBack.setImageResource(R.drawable.ic_image);
+            } else{
+                Picasso.get().load(itemsModel.getBack()).into(cardBack);
+            }
             fName.setText(Objects.requireNonNull(itemsModel).getfN());
             lName.setText(Objects.requireNonNull(itemsModel).getlN());
             userMail.setText(Objects.requireNonNull(itemsModel).geteM());
@@ -248,19 +256,8 @@ public class ItemsPreviewActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
-                                            db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).update("conn", FieldValue.arrayUnion(userID));
-                                            Map<Object,Object> notify = new HashMap<>();
-                                            notify.put("msg","New Connection is added "+ model.getfN());
-                                            Date c = Calendar.getInstance().getTime();
-                                            @SuppressLint("SimpleDateFormat")
-                                            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                                            String formattedDate = df.format(c);
-                                            notify.put("date",formattedDate);
-                                            db.collection("user").document(mAuth.getCurrentUser().getUid())
-                                                    .collection("notify").add(notify);
-                                            getNotification();
-                                            break;
-
+                                            db.collection("user").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
+                                                    .update("conn", FieldValue.arrayUnion(userID));
                                         case DialogInterface.BUTTON_NEGATIVE:
                                             startActivity(new Intent(ItemsPreviewActivity.this, NavigationActivity.class));
                                             break;

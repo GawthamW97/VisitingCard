@@ -1,8 +1,6 @@
 package com.ilm.visitingcard_v11;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +29,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.ilm.visitingcard_v11.Fragments.AddFragment;
 import com.ilm.visitingcard_v11.Fragments.HomeFragment;
-import com.ilm.visitingcard_v11.Fragments.NotificationFragment;
 import com.ilm.visitingcard_v11.Fragments.ProfileFragment;
 import com.ilm.visitingcard_v11.Fragments.SettingFragment;
 import com.squareup.picasso.Picasso;
@@ -53,13 +50,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel =
-                    new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            Objects.requireNonNull(manager).createNotificationChannel(channel);
-        }
 
         View mView = getLayoutInflater().inflate(R.layout.nav_header,null);
         userName = mView.findViewById(R.id.nav_user);
@@ -90,7 +80,12 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
                     // Set the values for the fields in Navigation Menu
                     userName.setText(Objects.requireNonNull(itemsModel).getfN() +" "+ Objects.requireNonNull(itemsModel).getlN());
                     userMail.setText(itemsModel.geteM());
-                    Picasso.get().load(itemsModel.getpPic()).into(userImage);
+                    Log.e("TAG",itemsModel.getpPic().toString());
+                    if (itemsModel.getpPic().isEmpty()) {
+                        userImage.setImageResource(R.drawable.ic_person_black_24dp);
+                    } else{
+                        Picasso.get().load(itemsModel.getpPic()).into(userImage);
+                    }
                     Log.e("TAG", "Success");
                 }else{
                     Log.e("TAG", "Failed");
@@ -151,18 +146,10 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             fragmentTransaction.commit();
         }
 
-        if(menuItem.getItemId() == R.id.nav_addCard){                               //if the user selects ADD/SHARE CARD from navigation activity
+        if(menuItem.getItemId() == R.id.nav_addCard) {                               //if the user selects ADD/SHARE CARD from navigation activity
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.container_fragment,new AddFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-
-        if(menuItem.getItemId() == R.id.nav_notifications){
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.container_fragment,new NotificationFragment());
+            fragmentTransaction.add(R.id.container_fragment, new AddFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
